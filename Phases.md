@@ -15,6 +15,7 @@
   - Project directory structure & TypeScript interfaces
   - Prisma schema with vector and full-text search definitions
   - *Status*: Completed & Verified (Clean Next.js 15 build, TypeScript type checks, Prisma client generated)
+  - *Git Commit*: `9f2349f`
 
 - [ ] **Phase 2: Knowledge Base & Ingestion Pipeline**
   - Python ingestion scripts (`ingestion/` with PyMuPDF, structure-aware chunking)
