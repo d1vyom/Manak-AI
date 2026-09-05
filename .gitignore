@@ -47,3 +47,6 @@ env/
 # Playwright MCP artifacts
 .playwright-mcp/
 
+
+.vercel
+.env*
