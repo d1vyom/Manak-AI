@@ -1,0 +1,91 @@
+// prisma/schema.prisma
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions"]
+}
+
+model Document {
+  id                String    @id @default(uuid())
+  standardNumber    String?   @map("standard_number")
+  partNumber        String?   @map("part_number")
+  revisionYear      Int?      @map("revision_year")
+  fullDesignation   String    @map("full_designation")
+  title             String
+  documentType      String    @map("document_type")
+  status            String    @default("current")
+  supersededBy      String?   @map("superseded_by")
+  publicationDate   DateTime? @map("publication_date")
+  effectiveDate     DateTime? @map("effective_date")
+  icsCode           String?   @map("ics_code")
+  productCategories String[]  @map("product_categories")
+  industries        String[]  @map("industries")
+  language          String    @default("en")
+  sourceUrl         String?   @map("source_url")
+  sourceFilePath    String?   @map("source_file_path")
+  totalPages        Int?      @map("total_pages")
+  isMandatory       Boolean   @default(false) @map("is_mandatory")
+  scopeSummary      String?   @map("scope_summary")
+  createdAt         DateTime  @default(now()) @map("created_at")
+  updatedAt         DateTime  @updatedAt @map("updated_at")
+
+  chunks            DocumentChunk[]
+
+  @@map("documents")
+  @@index([standardNumber])
+  @@index([documentType])
+  @@index([status])
+}
+
+model DocumentChunk {
+  id                 String    @id @default(uuid())
+  documentId         String    @map("document_id")
+  chunkIndex         Int       @map("chunk_index")
+  clauseNumber       String?   @map("clause_number")
+  clauseTitle        String?   @map("clause_title")
+  sectionPath        String?   @map("section_path")
+  chunkType          String    @map("chunk_type")
+  pageNumberStart    Int?      @map("page_number_start")
+  pageNumberEnd      Int?      @map("page_number_end")
+  content            String
+  contentWithContext String?   @map("content_with_context")
+  parentChunkId      String?   @map("parent_chunk_id")
+  embedding          Unsupported("vector(768)")?
+  tokenCount         Int?      @map("token_count")
+  createdAt          DateTime  @default(now()) @map("created_at")
+
+  document           Document  @relation(fields: [documentId], references: [id], onDelete: Cascade)
+  parentChunk        DocumentChunk? @relation("ChunkHierarchy", fields: [parentChunkId], references: [id])
+  childChunks        DocumentChunk[] @relation("ChunkHierarchy")
+
+  @@map("document_chunks")
+  @@index([documentId])
+  @@index([clauseNumber])
+  @@index([chunkType])
+}
+
+model Qco {
+  id                  String    @id @default(uuid())
+  qcoNumber           String    @map("qco_number")
+  qcoTitle            String    @map("qco_title")
+  standardNumber      String    @map("standard_number")
+  standardDesignation String?   @map("standard_designation")
+  productDescription  String?   @map("product_description")
+  gazetteDate         DateTime? @map("gazette_date")
+  effectiveDate       DateTime  @map("effective_date")
+  certificationType   String?   @map("certification_type")
+  scopeDescription    String?   @map("scope_description")
+  sourceUrl           String?   @map("source_url")
+  isActive            Boolean   @default(true) @map("is_active")
+  createdAt           DateTime  @default(now()) @map("created_at")
+
+  @@map("qcos")
+  @@index([standardNumber])
+  @@index([isActive])
+}

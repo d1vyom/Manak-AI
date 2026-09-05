@@ -1,0 +1,45 @@
+# Dependencies
+/node_modules
+/.pnp
+.pnp.js
+.yarn/install-state.gz
+
+# Testing
+/coverage
+
+# Next.js
+/.next/
+/out/
+
+# Production
+/build
+/dist
+
+# Misc
+.DS_Store
+*.pem
+
+# Local env files
+.env*.local
+.env
+!.env.example
+
+# Vercel
+.vercel
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# Prisma
+/prisma/migrations/dev.db
+/prisma/migrations/dev.db-journal
+
+# Python / Ingestion
+__pycache__/
+*.py[cod]
+*$py.class
+venv/
+.venv/
+env/
+.env
