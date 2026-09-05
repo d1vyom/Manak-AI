@@ -34,21 +34,18 @@ STRICT COMPLIANCE & CITATION RULES:
    "The available Indian Standards and documents do not provide sufficient information on this topic." Do not guess or rely on external training data.
 5. Mandatory Status: Clearly indicate whether the standard is MANDATORY under an active Quality Control Order (QCO) or VOLUNTARY.
 6. Language: Respond in ${language === "hi" ? "Hindi (हिन्दी)" : "English"}.
-7. Standard Number Preservation: Always write Indian Standard designations in Latin alphanumeric script (e.g. "IS 14543:2016", "IS 10500:2012", not "आई एस").
+7. Standard Number Identification & Preservation: ALWAYS explicitly state the applicable Indian Standard designation (e.g. "IS 14543:2016", "IS 2347:2017") in Latin script in your answer. Never translate standard numbers into Devanagari (write "IS 14543", not "आई एस").
 
 Tone: Authoritative, objective, structured, professional government/regulatory style.`;
 }
 
-/**
- * Detects whether the query is in Hindi based on Devanagari Unicode range.
- */
-export function detectLanguage(query: string, requestedLang?: string): "en" | "hi" {
-  if (requestedLang === "hi") return "hi";
-  if (requestedLang === "en") return "en";
-  // Check for Devanagari characters: U+0900 to U+097F
-  const hasDevanagari = /[\u0900-\u097F]/.test(query);
-  return hasDevanagari ? "hi" : "en";
-}
+import {
+  detectLanguage,
+  extractCrossLingualKeywords,
+  ensureLatinStandardPreservation,
+} from "../utils/language";
+
+export { detectLanguage };
 
 /**
  * Orchestrates the complete RAG execution flow.
@@ -65,10 +62,12 @@ export async function runRagPipeline(query: string, requestedLang?: "en" | "hi" 
     "RETRIEVAL_QUERY"
   );
 
-  // 3. Hybrid Retrieval
-  const searchKeywords = entities.keywords && entities.keywords.length > 0
-    ? entities.keywords.join(" ")
-    : query;
+  // 3. Hybrid Retrieval with cross-lingual keyword expansion
+  const crossLingualKeywords = extractCrossLingualKeywords(query);
+  const allKeywords = Array.from(
+    new Set([...(entities.keywords || []), ...crossLingualKeywords])
+  );
+  const searchKeywords = allKeywords.length > 0 ? allKeywords.join(" ") : query;
 
   const retrievalResults = await searchStandards({
     queryText: `${query} ${searchKeywords}`,
@@ -129,10 +128,21 @@ Provide a structured, evidence-based compliance answer with immediate [REF_N] ci
     });
   }
 
-  // 7. Post-Verification Callback
+  // 7. Post-Verification Callback with Latin Script Preservation
+  const sanitizedStream = (async function* () {
+    for await (const chunk of responseStream) {
+      if (chunk.text) {
+        yield { text: ensureLatinStandardPreservation(chunk.text) };
+      } else {
+        yield chunk;
+      }
+    }
+  })();
+
   const finalize = (fullText: string): CitationValidationResult => {
+    const preservedText = ensureLatinStandardPreservation(fullText);
     return validateAndExtractCitations(
-      fullText,
+      preservedText,
       evidenceBlocks,
       confidence,
       query,
@@ -147,7 +157,7 @@ Provide a structured, evidence-based compliance answer with immediate [REF_N] ci
     evidenceBlocks,
     mandatoryStatus,
     isAbstention,
-    responseStream,
+    responseStream: sanitizedStream,
     finalize,
   };
 }

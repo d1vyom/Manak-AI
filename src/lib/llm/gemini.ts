@@ -15,8 +15,9 @@ export function getGeminiClient(): GoogleGenAI {
 }
 
 export const GEMINI_MODELS = {
-  MAIN: "gemini-3.6-flash",
-  FAST: "gemini-3.6-flash",
+  MAIN: "gemini-3.5-flash-lite",
+  FALLBACK: "gemini-3.6-flash",
+  FAST: "gemini-3.5-flash-lite",
   EMBEDDING: "gemini-embedding-2",
 };
 
@@ -34,7 +35,23 @@ async function withRetry<T>(fn: () => Promise<T>, maxRetries = 3, initialDelayMs
         String(err?.message || "").includes("RESOURCE_EXHAUSTED");
 
       if (isRateLimit && attempt < maxRetries - 1) {
-        const delay = initialDelayMs * Math.pow(2, attempt) + Math.random() * 500;
+        // Extract retryDelay from Gemini API error message or details if present
+        let delay = initialDelayMs * Math.pow(2, attempt) + Math.random() * 500;
+
+        const errMsg = String(err?.message || "");
+        const retryDelayMatch =
+          errMsg.match(/retry in\s+([\d\.]+)\s*s/i) ||
+          errMsg.match(/"retryDelay":\s*"(\d+)s"/i);
+
+        if (retryDelayMatch && retryDelayMatch[1]) {
+          const parsedSecs = parseFloat(retryDelayMatch[1]);
+          if (!isNaN(parsedSecs) && parsedSecs > 0) {
+            delay = (parsedSecs + 2) * 1000;
+          }
+        } else if (errMsg.includes("RESOURCE_EXHAUSTED") || errMsg.includes("Quota exceeded")) {
+          delay = Math.max(delay, 22000);
+        }
+
         console.warn(
           `[Gemini API] Rate limit (429) hit. Retrying attempt ${attempt + 1}/${maxRetries} after ${Math.round(delay)}ms...`
         );
