@@ -1,6 +1,9 @@
 // src/app/api/search/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { searchStandards } from "@/lib/db/queries";
+ 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
   try {

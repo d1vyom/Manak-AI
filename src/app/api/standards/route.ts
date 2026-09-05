@@ -1,6 +1,9 @@
 // src/app/api/standards/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { getStandardsList, getStandardDetails } from "@/lib/db/queries";
+ 
+export const dynamic = "force-dynamic";
+export const maxDuration = 30;
 
 export async function GET(request: NextRequest) {
   try {

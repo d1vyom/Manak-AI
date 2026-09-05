@@ -4,6 +4,7 @@ import { performGapAnalysis } from "@/lib/compliance/gap-analysis";
 import { GapAnalysisInput } from "@/types/compliance";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
   try {
