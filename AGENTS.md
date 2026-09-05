@@ -51,6 +51,13 @@ Use Context7 when:
 
 Prefer official/current documentation over assumptions.
 
+### Google Stitch
+Use Google Stitch MCP for:
+- generating high-fidelity UI screens and layouts
+- establishing and applying cohesive enterprise/government design systems
+- prototyping complex UI components (chat interface, split citation drawer, compliance pathway, standards explorer)
+- translating generated design specifications into production Next.js Tailwind components
+
 ## General Rule
 
 Do not use an MCP simply because it exists.

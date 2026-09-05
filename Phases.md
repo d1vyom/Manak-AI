@@ -17,12 +17,13 @@
   - *Status*: Completed & Verified (Clean Next.js 15 build, TypeScript type checks, Prisma client generated)
   - *Git Commit*: `9f2349f`
 
-- [ ] **Phase 2: Knowledge Base & Ingestion Pipeline**
+- [x] **Phase 2: Knowledge Base & Ingestion Pipeline**
   - Python ingestion scripts (`ingestion/` with PyMuPDF, structure-aware chunking)
   - Clause-level boundary splitting & breadcrumb context injection
   - Curated seed dataset of Tier 1 BIS standards (IS 14543, IS 10500, IS 2347, IS 9873, IS 4151, IS 1786, IS 456)
   - QCO gazette notification records & metadata configs
-  - *Git Commit*: Pending
+  - Database seed script (`src/lib/db/seed.ts`) and typed dataset (`src/lib/data/seed-data.ts`)
+  - *Status*: Completed & Verified (Python syntax checks pass, seed dataset validated, Next.js build clean)
 
 - [ ] **Phase 3: Database & Hybrid Vector Search**
   - Supabase PostgreSQL schema migration (HNSW vector index + GIN tsvector)
@@ -59,8 +60,9 @@
   - Bilingual UI strings and dictionary (`src/lib/utils/i18n.ts`)
   - *Git Commit*: Pending
 
-- [ ] **Phase 8: Enterprise Frontend UI**
-  - Design system: Government/Enterprise aesthetic (Navy `#1B2A4A`, Saffron `#F28C28`)
+- [ ] **Phase 8: Enterprise Frontend UI (with Google Stitch MCP)**
+  - Design system: Government/Enterprise aesthetic (Navy `#1B2A4A`, Saffron `#F28C28`) modeled with Google Stitch
+  - High-fidelity screens and variants via Google Stitch MCP
   - Header with BIS emblem branding, navigation, and Hindi/English switch
   - Landing Page (`/`): Hero, 4 capability cards, interactive example prompts
   - AI Chat Page (`/chat`): Split-panel (60% chat stream with inline citations, 40% source drawer)
