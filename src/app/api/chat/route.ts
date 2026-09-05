@@ -7,7 +7,8 @@ export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const query = typeof body.query === "string" ? body.query.trim() : "";
+    const rawQuery = body.query ?? body.message;
+    const query = typeof rawQuery === "string" ? rawQuery.trim() : "";
     const requestedLang = body.language as "en" | "hi" | "auto" | undefined;
 
     if (!query) {
@@ -28,46 +29,61 @@ export async function POST(req: NextRequest) {
     // Build Server-Sent Events stream
     const encoder = new TextEncoder();
 
+    let isClosed = false;
+
     const stream = new ReadableStream({
       async start(controller) {
-        // 1. Send metadata event first
-        const metadataPayload = {
-          type: "metadata",
-          data: {
-            language,
-            confidence: confidence.level,
-            confidenceExplanation: confidence.explanation,
-            confidenceScore: confidence.score,
-            entities,
-            retrievedDocuments: evidenceBlocks.length,
-            mandatoryStatus,
-            isAbstention,
-          },
+        const safeEnqueue = (payload: string) => {
+          if (!isClosed) {
+            try {
+              controller.enqueue(encoder.encode(payload));
+            } catch {
+              isClosed = true;
+            }
+          }
         };
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(metadataPayload)}\n\n`));
+
+        // 1. Send metadata event first
+        const metadataData = {
+          type: "metadata",
+          language,
+          confidence,
+          extractedEntities: entities,
+          retrievedDocuments: evidenceBlocks.length,
+          mandatoryStatus,
+          isAbstention,
+        };
+        safeEnqueue(`event: metadata\ndata: ${JSON.stringify(metadataData)}\n\n`);
 
         // 2. Stream generation tokens
         let fullGeneratedText = "";
         try {
           for await (const chunk of responseStream) {
+            if (isClosed) break;
             const textChunk = chunk.text || "";
             if (textChunk) {
               fullGeneratedText += textChunk;
-              const contentPayload = {
+              const contentData = {
                 type: "content",
+                text: textChunk,
                 data: textChunk,
               };
-              controller.enqueue(encoder.encode(`data: ${JSON.stringify(contentPayload)}\n\n`));
+              safeEnqueue(`event: content\ndata: ${JSON.stringify(contentData)}\n\n`);
             }
           }
         } catch (streamError) {
-          console.error("Error during content generation streaming:", streamError);
+          if (!isClosed) {
+            console.error("Error during content generation streaming:", streamError);
+          }
         }
+
+        if (isClosed) return;
 
         // 3. Extract and send validated citations with rich verification metadata
         const finalResult = finalize(fullGeneratedText);
-        const citationsPayload = {
+        const citationsData = {
           type: "citations",
+          citations: finalResult.validCitations,
           data: finalResult.validCitations,
           hasHallucinations: finalResult.hasHallucinations,
           hallucinatedStandards: finalResult.hallucinatedStandards,
@@ -77,18 +93,25 @@ export async function POST(req: NextRequest) {
           isAbstention: finalResult.isAbstention,
           abstentionReason: finalResult.abstentionReason,
         };
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(citationsPayload)}\n\n`));
+        safeEnqueue(`event: citations\ndata: ${JSON.stringify(citationsData)}\n\n`);
 
         // 4. Send done event
-        const donePayload = {
+        const doneData = {
           type: "done",
-          data: {
-            completedAt: new Date().toISOString(),
-          },
+          completedAt: new Date().toISOString(),
         };
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(donePayload)}\n\n`));
+        safeEnqueue(`event: done\ndata: ${JSON.stringify(doneData)}\n\n`);
 
-        controller.close();
+        if (!isClosed) {
+          try {
+            controller.close();
+          } catch {
+            isClosed = true;
+          }
+        }
+      },
+      cancel() {
+        isClosed = true;
       },
     });
 

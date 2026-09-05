@@ -6,8 +6,14 @@ export const dynamic = "force-dynamic";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
-    const query = typeof body.query === "string" ? body.query.trim() : "";
+    let body: any = {};
+    try {
+      body = await req.json();
+    } catch {
+      body = {};
+    }
+    const rawQuery = body.query ?? body.product ?? body.productName;
+    const query = typeof rawQuery === "string" ? rawQuery.trim() : "";
     const language = body.language as "en" | "hi" | undefined;
 
     if (!query) {

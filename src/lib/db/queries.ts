@@ -76,16 +76,31 @@ export async function searchStandards(params: SearchParams): Promise<RetrievalRe
   return inMemoryHybridSearch(params);
 }
 
+const STOP_WORDS = new Set([
+  "what", "are", "the", "for", "under", "which", "and", "with", "does", "can",
+  "how", "has", "have", "had", "been", "from", "into", "onto", "this", "that",
+  "these", "those", "such", "than", "then", "there", "their", "will", "would",
+  "could", "should", "about", "above", "after", "again", "also", "any", "before",
+  "being", "between", "both", "but", "down", "during", "each", "few", "more",
+  "most", "other", "some", "only", "own", "same", "very", "who", "whom", "why",
+]);
+
+const GENERIC_QUERY_WORDS = new Set([
+  "bis", "standard", "standards", "indian", "mandate", "requirement", "requirements", "compliance"
+]);
+
 /**
  * Robust in-memory hybrid search algorithm calculating term frequencies and RRF scores.
  */
 function inMemoryHybridSearch(params: SearchParams): RetrievalResult[] {
   const { queryText, matchCount = 10, filterStandard, rrfK = 60 } = params;
-  const cleanTerms = queryText
+  const rawTerms = queryText
     .toLowerCase()
     .replace(/[^\w\s]/g, " ")
     .split(/\s+/)
-    .filter((t) => t.length > 2);
+    .filter((t) => t.length > 2 && !STOP_WORDS.has(t));
+
+  const specificTerms = rawTerms.filter((t) => !GENERIC_QUERY_WORDS.has(t));
 
   // Document map for fast metadata joins
   const docMap = new Map(SEED_DOCUMENTS.map((d) => [d.id, d]));
@@ -106,18 +121,37 @@ function inMemoryHybridSearch(params: SearchParams): RetrievalResult[] {
     const standardLower = doc.standardNumber.toLowerCase();
 
     // Calculate lexical keyword match score
-    let matchHits = 0;
-    for (const term of cleanTerms) {
-      if (contentLower.includes(term)) matchHits += 2;
-      if (clauseTitleLower.includes(term)) matchHits += 4;
-      if (docTitleLower.includes(term)) matchHits += 3;
-      if (standardLower.includes(term)) matchHits += 8;
+    let specificHits = 0;
+    let genericHits = 0;
+    for (const term of rawTerms) {
+      const isSpecific = !GENERIC_QUERY_WORDS.has(term);
+      let weight = 0;
+      if (contentLower.includes(term)) weight += 2;
+      if (clauseTitleLower.includes(term)) weight += 4;
+      if (docTitleLower.includes(term)) weight += 3;
+      if (standardLower.includes(term)) weight += 8;
+
+      if (isSpecific) {
+        specificHits += weight;
+      } else {
+        genericHits += weight;
+      }
     }
+
+    // If query has specific domain terms, require at least one specific term match
+    // to avoid matching completely out-of-scope queries on generic words like "standard"
+    if (specificTerms.length > 0 && specificHits === 0) {
+      return null;
+    }
+
+    const matchHits = specificHits * 2 + genericHits;
+    if (matchHits === 0) return null;
 
     return {
       chunk,
       doc,
       matchHits,
+      specificHits,
     };
   })
     .filter((item): item is NonNullable<typeof item> => item !== null && item.matchHits > 0)
@@ -127,9 +161,12 @@ function inMemoryHybridSearch(params: SearchParams): RetrievalResult[] {
   const topHits = scoredChunks.slice(0, matchCount);
 
   return topHits.map((item, idx) => {
-    const { chunk, doc, matchHits } = item;
+    const { chunk, doc, matchHits, specificHits } = item;
     const rank = idx + 1;
     const rrfScore = Math.round((1.0 / (rrfK + rank)) * 1000000) / 1000000;
+    const normalizedSim = specificTerms.length > 0
+      ? Math.min(0.95, 0.4 + (specificHits / Math.max(1, specificTerms.length * 4)) * 0.5)
+      : Math.min(0.85, 0.4 + matchHits * 0.05);
 
     return {
       chunkId: chunk.id,
@@ -149,7 +186,7 @@ function inMemoryHybridSearch(params: SearchParams): RetrievalResult[] {
       rrfScore,
       inVectorResults: true,
       inKeywordResults: true,
-      similarity: Math.min(0.95, 0.5 + matchHits * 0.05),
+      similarity: Math.round(normalizedSim * 100) / 100,
       matchesRequestedStandard: filterStandard
         ? doc.standardNumber.toLowerCase().includes(filterStandard.toLowerCase())
         : false,
