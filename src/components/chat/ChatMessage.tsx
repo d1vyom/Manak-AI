@@ -91,9 +91,9 @@ export function ChatMessage({ message }: ChatMessageProps) {
         <Shield className="h-5 w-5 text-saffron-400" />
       </div>
 
-      <div className="flex flex-col max-w-3xl flex-1 overflow-hidden">
+      <div className="flex flex-col max-w-3xl flex-1 min-w-0">
         {/* Message Header */}
-        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-navy-100 pb-2.5 dark:border-navy-800">
+        <div className="relative z-20 flex flex-wrap items-center justify-between gap-2 border-b border-navy-100 pb-2.5 dark:border-navy-800">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold tracking-tight text-navy-900 dark:text-white">
               {language === "hi" ? "मानक AI सहायक" : "Manak AI Assistant"}

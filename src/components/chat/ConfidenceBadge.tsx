@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from "react";
-import { ShieldCheck, Info, CheckCircle2, AlertCircle } from "lucide-react";
+import { ShieldCheck, Info, CheckCircle2, AlertCircle, X } from "lucide-react";
 import { ConfidenceResult } from "@/types/rag";
 import { useAppStore } from "@/lib/store/app-store";
 import { t } from "@/lib/utils/i18n";
@@ -52,14 +52,16 @@ export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeP
   const Icon = currentStyle.icon;
 
   return (
-    <div className="relative inline-block">
+    <div
+      className="relative inline-block"
+      onMouseEnter={() => setShowTooltip(true)}
+      onMouseLeave={() => setShowTooltip(false)}
+    >
       <button
         type="button"
-        onClick={() => setShowTooltip(!showTooltip)}
-        onMouseEnter={() => setShowTooltip(true)}
-        onMouseLeave={() => setShowTooltip(false)}
+        onClick={() => setShowTooltip((prev) => !prev)}
+        aria-label="View grounding & confidence metrics"
         className={`inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold backdrop-blur-sm transition-all hover:scale-105 ${currentStyle.bg} ${currentStyle.border} ${currentStyle.text} ${className}`}
-        title="Click to view grounding & confidence metrics"
       >
         <span className={`h-1.5 w-1.5 rounded-full ${currentStyle.dot} animate-pulse`} />
         <span>{percentage}%</span>
@@ -69,15 +71,28 @@ export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeP
 
       {/* Grounding Explanation Tooltip / Popover */}
       {showTooltip && (
-        <div className="absolute left-0 top-full z-50 mt-2 w-72 rounded-xl border border-navy-700/20 bg-white p-3.5 text-left shadow-xl dark:border-navy-700 dark:bg-navy-900 animate-in fade-in zoom-in-95 duration-150">
+        <div className="absolute right-0 top-full z-50 mt-2 w-72 sm:w-80 max-w-[calc(100vw-3rem)] rounded-xl border border-navy-700/20 bg-white p-3.5 text-left shadow-2xl dark:border-navy-700 dark:bg-navy-900 animate-in fade-in zoom-in-95 duration-150">
           <div className="flex items-center justify-between border-b border-border pb-2">
             <div className="flex items-center gap-1.5 font-bold text-xs text-navy-900 dark:text-white">
               <ShieldCheck className="h-4 w-4 text-saffron-500" />
               <span>{t("retrievalScoreLabel", language)}</span>
             </div>
-            <span className={`text-xs font-extrabold ${currentStyle.text}`}>
-              {percentage}%
-            </span>
+            <div className="flex items-center gap-2">
+              <span className={`text-xs font-extrabold ${currentStyle.text}`}>
+                {percentage}%
+              </span>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setShowTooltip(false);
+                }}
+                className="text-muted-foreground hover:text-navy-900 dark:hover:text-white p-0.5 rounded"
+                aria-label="Close popover"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
           </div>
 
           <p className="mt-2 text-[11px] leading-relaxed text-muted-foreground">
