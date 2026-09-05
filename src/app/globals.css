@@ -120,3 +120,11 @@
   animation: citation-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
   border-color: #F28C28 !important;
 }
+
+/* Hide Next.js Development Indicator in all environments */
+nextjs-portal,
+[data-nextjs-dev-overlay-portal],
+[data-nextjs-toast],
+div[data-nextjs-dialog-overlay] {
+  display: none !important;
+}
