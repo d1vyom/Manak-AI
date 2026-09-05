@@ -57,10 +57,12 @@
   - *Status*: Completed & Verified (14/14 unit tests passed, 4/4 live pipeline compliance & abstention tests passed)
   - *Git Commit*: `8e66348`
 
-- [ ] **Phase 6: Compliance Pathway & Gap Analysis**
-  - Structured 7-step certification pathway builder (`POST /api/compliance/pathway`)
-  - Compliance gap analysis engine (`POST /api/compliance/gap-analysis`)
-  - Requirement audit classifier (SATISFIED, NOT_SATISFIED, NEEDS_VERIFICATION)
+- [x] **Phase 6: Compliance Pathway & Gap Analysis**
+  - Structured 7-step certification pathway builder (`src/lib/compliance/pathway.ts`)
+  - Compliance gap analysis engine (`src/lib/compliance/gap-analysis.ts`)
+  - Requirement audit classifier (SATISFIED, NOT_SATISFIED, NEEDS_VERIFICATION across materials, testing, certification, manufacturing, and documentation)
+  - Dedicated API endpoints: `POST /api/compliance/pathway` and `POST /api/compliance/gap-analysis`
+  - *Status*: Completed & Verified (30/30 unit and integration assertions passed, clean Next.js 15 build)
   - *Git Commit*: Pending
 
 - [ ] **Phase 7: Multilingual Support (Hindi & English)**
