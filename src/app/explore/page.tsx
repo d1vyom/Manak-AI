@@ -7,20 +7,20 @@ import {
   Search,
   ShieldAlert,
   ShieldCheck,
-  Filter,
   LayoutGrid,
   Table as TableIcon,
-  ExternalLink,
   Sparkles,
-  CheckCircle2,
   ArrowRight,
   FileText,
 } from "lucide-react";
 import Link from "next/link";
 import { StandardSummary, StandardsResponse } from "@/types/api";
 import { StandardDetailModal } from "@/components/explore/StandardDetailModal";
+import { useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 
 export default function ExplorePage() {
+  const { language } = useAppStore();
   const [standards, setStandards] = useState<StandardSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState("");
@@ -75,6 +75,15 @@ export default function ExplorePage() {
     return true;
   });
 
+  const filterTabs = [
+    { id: "all", label: t("filterAll", language) },
+    { id: "mandatory", label: t("filterMandatory", language) },
+    { id: "voluntary", label: t("filterVoluntary", language) },
+    { id: "water", label: t("filterWater", language) },
+    { id: "consumer", label: t("filterConsumer", language) },
+    { id: "construction", label: t("filterConstruction", language) },
+  ];
+
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8 sm:px-6">
       {/* Page Header */}
@@ -86,14 +95,14 @@ export default function ExplorePage() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold tracking-tight text-navy-900 dark:text-white sm:text-2xl">
-                Indian Standards Explorer
+                {t("explorerTitle", language)}
               </h1>
               <span className="rounded-full bg-saffron-100 px-2.5 py-0.5 text-xs font-bold text-saffron-800 dark:bg-saffron-950 dark:text-saffron-300">
-                19,000+ Standards Index
+                {t("standardsIndexedBadge", language)}
               </span>
             </div>
             <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-              Explore officially indexed BIS standards, mandatory QCO Gazette status, and normative testing specifications.
+              {t("explorerSubtitle", language)}
             </p>
           </div>
         </div>
@@ -111,7 +120,7 @@ export default function ExplorePage() {
               }`}
             >
               <TableIcon className="h-3.5 w-3.5" />
-              <span>Table</span>
+              <span>{t("tableView", language)}</span>
             </button>
             <button
               type="button"
@@ -123,7 +132,7 @@ export default function ExplorePage() {
               }`}
             >
               <LayoutGrid className="h-3.5 w-3.5" />
-              <span>Cards</span>
+              <span>{t("cardsView", language)}</span>
             </button>
           </div>
         </div>
@@ -138,7 +147,7 @@ export default function ExplorePage() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Search IS number, product, or keyword (e.g. IS 14543, stainless steel, toy)..."
+            placeholder={t("searchStandardsPlaceholder", language)}
             className="w-full rounded-xl border border-navy-200 bg-white pl-10 pr-4 py-2.5 text-xs text-navy-900 placeholder:text-muted-foreground/70 focus:border-saffron-500 focus:outline-none focus:ring-2 focus:ring-saffron-500/20 dark:border-navy-700 dark:bg-navy-900 dark:text-white dark:focus:border-saffron-400"
           />
         </div>
@@ -146,16 +155,9 @@ export default function ExplorePage() {
         {/* Filter Badges */}
         <div className="flex flex-wrap items-center gap-1.5 text-xs">
           <span className="text-[11px] font-bold uppercase text-muted-foreground mr-1 hidden sm:inline">
-            Filter:
+            {t("filterLabel", language)}
           </span>
-          {[
-            { id: "all", label: "All Standards" },
-            { id: "mandatory", label: "Mandatory QCO" },
-            { id: "voluntary", label: "Voluntary" },
-            { id: "water", label: "Water & Potable" },
-            { id: "consumer", label: "Consumer Goods" },
-            { id: "construction", label: "Construction & Steel" },
-          ].map((tab) => (
+          {filterTabs.map((tab) => (
             <button
               key={tab.id}
               type="button"
@@ -178,17 +180,19 @@ export default function ExplorePage() {
           <div className="flex h-64 items-center justify-center">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Sparkles className="h-4 w-4 animate-spin text-saffron-500" />
-              <span>Indexing Indian Standards...</span>
+              <span>{t("indexingStandards", language)}</span>
             </div>
           </div>
         ) : filteredStandards.length === 0 ? (
           <div className="flex h-64 flex-col items-center justify-center rounded-2xl border border-dashed border-navy-200 bg-white p-8 text-center dark:border-navy-800 dark:bg-navy-950">
             <BookOpen className="h-10 w-10 text-muted-foreground/40" />
             <h3 className="mt-3 text-sm font-bold text-navy-900 dark:text-white">
-              No matching Indian Standards found
+              {t("noStandardsFound", language)}
             </h3>
             <p className="mt-1 text-xs text-muted-foreground max-w-sm">
-              We couldn&apos;t find standards matching &ldquo;{searchQuery}&rdquo;. Try searching for an IS number or general product term.
+              {searchQuery
+                ? `${t("noStandardsDesc", language)} ("${searchQuery}")`
+                : t("noStandardsDesc", language)}
             </p>
             <button
               type="button"
@@ -198,7 +202,7 @@ export default function ExplorePage() {
               }}
               className="mt-4 rounded-lg bg-navy-800 px-4 py-2 text-xs font-bold text-white hover:bg-navy-700"
             >
-              Reset Filters
+              {t("btnResetFilters", language)}
             </button>
           </div>
         ) : viewMode === "table" ? (
@@ -209,19 +213,19 @@ export default function ExplorePage() {
                 <thead className="border-b border-navy-200/80 bg-navy-50/70 text-navy-900 dark:border-navy-800 dark:bg-navy-950/60 dark:text-white">
                   <tr>
                     <th className="px-5 py-3.5 font-bold uppercase tracking-wider text-[11px]">
-                      Standard Designation
+                      {t("colStandard", language)}
                     </th>
                     <th className="px-5 py-3.5 font-bold uppercase tracking-wider text-[11px]">
-                      Standard Title & Scope
+                      {t("colTitleScope", language)}
                     </th>
                     <th className="px-5 py-3.5 font-bold uppercase tracking-wider text-[11px]">
-                      Compliance Status
+                      {t("colStatus", language)}
                     </th>
                     <th className="px-5 py-3.5 font-bold uppercase tracking-wider text-[11px]">
-                      Sector / Categories
+                      {t("colCategories", language)}
                     </th>
                     <th className="px-5 py-3.5 text-right font-bold uppercase tracking-wider text-[11px]">
-                      Actions
+                      {t("colActions", language)}
                     </th>
                   </tr>
                 </thead>
@@ -262,7 +266,7 @@ export default function ExplorePage() {
                           <div className="flex flex-col gap-1 items-start">
                             <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-[11px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                               <ShieldAlert className="h-3 w-3" />
-                              MANDATORY
+                              {t("statusMandatory", language)}
                             </span>
                             {std.qcoDetails && (
                               <span className="font-mono text-[9px] text-muted-foreground">
@@ -273,7 +277,7 @@ export default function ExplorePage() {
                         ) : (
                           <span className="inline-flex items-center gap-1 rounded bg-navy-100 px-2 py-0.5 text-[11px] font-medium text-navy-700 dark:bg-navy-800 dark:text-navy-300">
                             <ShieldCheck className="h-3 w-3" />
-                            VOLUNTARY
+                            {t("statusVoluntary", language)}
                           </span>
                         )}
                       </td>
@@ -301,7 +305,7 @@ export default function ExplorePage() {
                             className="inline-flex items-center gap-1 rounded-lg border border-navy-200 px-2.5 py-1.5 text-xs font-semibold text-navy-800 hover:bg-slate-100 dark:border-navy-700 dark:text-navy-200 dark:hover:bg-navy-800"
                           >
                             <FileText className="h-3 w-3" />
-                            <span>Details</span>
+                            <span>{t("btnDetails", language)}</span>
                           </button>
 
                           <Link
@@ -309,7 +313,7 @@ export default function ExplorePage() {
                             className="inline-flex items-center gap-1 rounded-lg bg-saffron-500 px-2.5 py-1.5 text-xs font-bold text-white hover:bg-saffron-600 transition-colors shadow-sm"
                           >
                             <Sparkles className="h-3 w-3" />
-                            <span>Ask AI</span>
+                            <span>{t("btnAskAi", language)}</span>
                           </Link>
                         </div>
                       </td>
@@ -336,11 +340,11 @@ export default function ExplorePage() {
                     {std.isMandatory ? (
                       <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                         <ShieldAlert className="h-3 w-3" />
-                        MANDATORY
+                        {t("statusMandatory", language)}
                       </span>
                     ) : (
                       <span className="rounded bg-navy-100 px-2 py-0.5 text-[10px] font-medium text-navy-700 dark:bg-navy-800 dark:text-navy-300">
-                        VOLUNTARY
+                        {t("statusVoluntary", language)}
                       </span>
                     )}
                   </div>
@@ -374,14 +378,14 @@ export default function ExplorePage() {
                     onClick={() => setSelectedStandard(std)}
                     className="text-xs font-semibold text-muted-foreground hover:text-navy-900 dark:hover:text-white"
                   >
-                    View Clauses
+                    {t("btnViewClauses", language)}
                   </button>
 
                   <Link
                     href={`/chat?q=${encodeURIComponent(`What are the requirements for ${std.standardNumber}?`)}`}
                     className="inline-flex items-center gap-1 rounded-lg bg-saffron-500 px-3 py-1.5 text-xs font-bold text-white hover:bg-saffron-600 transition-colors"
                   >
-                    <span>Ask AI</span>
+                    <span>{t("btnAskAi", language)}</span>
                     <ArrowRight className="h-3 w-3" />
                   </Link>
                 </div>

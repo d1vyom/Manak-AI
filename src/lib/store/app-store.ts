@@ -1,6 +1,5 @@
-// src/lib/store/app-store.ts
-
 import { create } from "zustand";
+import { persist } from "zustand/middleware";
 import { Citation } from "@/types/citations";
 import { CompliancePathway } from "@/types/compliance";
 import { ConfidenceResult } from "@/types/rag";
@@ -50,54 +49,63 @@ interface AppState {
   setActiveConfidence: (conf: ConfidenceResult | null) => void;
 }
 
-export const useAppStore = create<AppState>((set) => ({
-  language: "en",
-  setLanguage: (lang) => set({ language: lang }),
+export const useAppStore = create<AppState>()(
+  persist(
+    (set) => ({
+      language: "en",
+      setLanguage: (lang) => set({ language: lang }),
 
-  messages: [],
-  setMessages: (messages) =>
-    set((state) => ({
-      messages: typeof messages === "function" ? messages(state.messages) : messages,
-    })),
-  addMessage: (message) =>
-    set((state) => ({ messages: [...state.messages, message] })),
-  updateLastMessage: (updater) =>
-    set((state) => {
-      if (state.messages.length === 0) return state;
-      const newMessages = [...state.messages];
-      const lastIndex = newMessages.length - 1;
-      newMessages[lastIndex] = updater(newMessages[lastIndex]);
-      return { messages: newMessages };
-    }),
-  clearMessages: () =>
-    set({
       messages: [],
+      setMessages: (messages) =>
+        set((state) => ({
+          messages: typeof messages === "function" ? messages(state.messages) : messages,
+        })),
+      addMessage: (message) =>
+        set((state) => ({ messages: [...state.messages, message] })),
+      updateLastMessage: (updater) =>
+        set((state) => {
+          if (state.messages.length === 0) return state;
+          const newMessages = [...state.messages];
+          const lastIndex = newMessages.length - 1;
+          newMessages[lastIndex] = updater(newMessages[lastIndex]);
+          return { messages: newMessages };
+        }),
+      clearMessages: () =>
+        set({
+          messages: [],
+          activeCitations: [],
+          highlightedCitationId: null,
+          activePathway: null,
+          activeConfidence: null,
+        }),
+      isStreaming: false,
+      setIsStreaming: (streaming) => set({ isStreaming: streaming }),
+
       activeCitations: [],
+      setActiveCitations: (citations) =>
+        set({
+          activeCitations: citations,
+          isDrawerOpen: citations.length > 0 ? true : false,
+        }),
       highlightedCitationId: null,
+      setHighlightedCitationId: (refId) =>
+        set({
+          highlightedCitationId: refId,
+          isDrawerOpen: refId ? true : false,
+        }),
+      isDrawerOpen: false,
+      setIsDrawerOpen: (open) => set({ isDrawerOpen: open }),
+
       activePathway: null,
+      setActivePathway: (pathway) => set({ activePathway: pathway }),
+
       activeConfidence: null,
+      setActiveConfidence: (conf) => set({ activeConfidence: conf }),
     }),
-  isStreaming: false,
-  setIsStreaming: (streaming) => set({ isStreaming: streaming }),
+    {
+      name: "manak-ai-app-storage",
+      partialize: (state) => ({ language: state.language }),
+    }
+  )
+);
 
-  activeCitations: [],
-  setActiveCitations: (citations) =>
-    set({
-      activeCitations: citations,
-      isDrawerOpen: citations.length > 0 ? true : false,
-    }),
-  highlightedCitationId: null,
-  setHighlightedCitationId: (refId) =>
-    set({
-      highlightedCitationId: refId,
-      isDrawerOpen: refId ? true : false,
-    }),
-  isDrawerOpen: false,
-  setIsDrawerOpen: (open) => set({ isDrawerOpen: open }),
-
-  activePathway: null,
-  setActivePathway: (pathway) => set({ activePathway: pathway }),
-
-  activeConfidence: null,
-  setActiveConfidence: (conf) => set({ activeConfidence: conf }),
-}));

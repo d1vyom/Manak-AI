@@ -2,16 +2,17 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Copy, Check, BookOpen, Quote, ShieldAlert } from "lucide-react";
+import { ExternalLink, Copy, Check, BookOpen, Quote, ShieldAlert, ShieldCheck } from "lucide-react";
 import { Citation } from "@/types/citations";
 import { useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 
 interface CitationCardProps {
   citation: Citation;
 }
 
 export function CitationCard({ citation }: CitationCardProps) {
-  const { highlightedCitationId, setHighlightedCitationId } = useAppStore();
+  const { highlightedCitationId, setHighlightedCitationId, language } = useAppStore();
   const [copied, setCopied] = useState(false);
 
   const isHighlighted = highlightedCitationId === citation.refId;
@@ -51,11 +52,12 @@ export function CitationCard({ citation }: CitationCardProps) {
         {citation.mandatoryStatus === "mandatory" ? (
           <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
             <ShieldAlert className="h-3 w-3" />
-            MANDATORY
+            {t("statusMandatory", language)}
           </span>
         ) : (
-          <span className="rounded bg-navy-100 px-2 py-0.5 text-[10px] font-medium text-navy-700 dark:bg-navy-800 dark:text-navy-300">
-            VOLUNTARY
+          <span className="inline-flex items-center gap-1 rounded bg-navy-100 px-2 py-0.5 text-[10px] font-medium text-navy-700 dark:bg-navy-800 dark:text-navy-300">
+            <ShieldCheck className="h-3 w-3" />
+            {t("statusVoluntary", language)}
           </span>
         )}
       </div>
@@ -73,7 +75,7 @@ export function CitationCard({ citation }: CitationCardProps) {
         </span>
         {citation.pageNumber && (
           <span className="rounded bg-slate-100 px-1.5 py-0.5 text-slate-700 dark:bg-navy-800 dark:text-navy-300">
-            p. {citation.pageNumber}
+            {t("page", language)} {citation.pageNumber}
           </span>
         )}
       </div>
@@ -97,12 +99,12 @@ export function CitationCard({ citation }: CitationCardProps) {
           {copied ? (
             <>
               <Check className="h-3 w-3 text-emerald-600" />
-              <span className="text-emerald-600 font-semibold">Copied!</span>
+              <span className="text-emerald-600 font-semibold">{t("btnQuoteCopied", language)}</span>
             </>
           ) : (
             <>
               <Copy className="h-3 w-3" />
-              <span>Copy Quote</span>
+              <span>{t("btnCopyQuote", language)}</span>
             </>
           )}
         </button>
@@ -113,7 +115,7 @@ export function CitationCard({ citation }: CitationCardProps) {
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 font-semibold text-[11px] text-saffron-600 transition-colors hover:text-saffron-700 hover:underline dark:text-saffron-400"
         >
-          <span>View Source</span>
+          <span>{t("btnViewSource", language)}</span>
           <ExternalLink className="h-3 w-3" />
         </a>
       </div>

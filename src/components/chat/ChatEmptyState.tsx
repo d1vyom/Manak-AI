@@ -1,41 +1,44 @@
 // src/components/chat/ChatEmptyState.tsx
 "use client";
 
-import { Shield, Sparkles, ArrowRight, BookOpen, Award, FileCheck2, Globe2 } from "lucide-react";
+import { Shield, ArrowRight, BookOpen, Award, FileCheck2, Globe2 } from "lucide-react";
+import { useAppStore } from "@/lib/store/app-store";
 
 interface ChatEmptyStateProps {
   onSelectPrompt: (prompt: string) => void;
 }
 
 export function ChatEmptyState({ onSelectPrompt }: ChatEmptyStateProps) {
+  const { language } = useAppStore();
+
   const examplePrompts = [
     {
       icon: Award,
-      title: "Manufacturer Compliance",
-      tag: "Mandatory QCO",
+      title: language === "hi" ? "निर्माता अनुपालन (Manufacturer)" : "Manufacturer Compliance",
+      tag: language === "hi" ? "अनिवार्य QCO" : "Mandatory QCO",
       prompt: "Which BIS standards apply to stainless steel water bottles?",
-      desc: "Checks QCO order S.O. 2655(E), IS 14543 requirements, and ISI mark applicability.",
+      desc: language === "hi" ? "QCO आदेश S.O. 2655(E), IS 14543 आवश्यकताएं और ISI मार्क जांचें।" : "Checks QCO order S.O. 2655(E), IS 14543 requirements, and ISI mark applicability.",
     },
     {
       icon: FileCheck2,
-      title: "Toy Safety Standards",
-      tag: "Safety & Chemical",
+      title: language === "hi" ? "खिलौना सुरक्षा मानक (Toys)" : "Toy Safety Standards",
+      tag: language === "hi" ? "सुरक्षा एवं रसायन" : "Safety & Chemical",
       prompt: "Is BIS certification mandatory for toys under Toys QCO 2020?",
-      desc: "Examines IS 9873 mechanical/flammability limits and Gazette mandates.",
+      desc: language === "hi" ? "IS 9873 यांत्रिक/ज्वलनशीलता सीमाएं और राजपत्र अधिदेश जांचें।" : "Examines IS 9873 mechanical/flammability limits and Gazette mandates.",
     },
     {
       icon: BookOpen,
-      title: "Drinking Water Quality",
-      tag: "Test Limits",
+      title: language === "hi" ? "पेयजल गुणवत्ता सीमाएं" : "Drinking Water Quality",
+      tag: language === "hi" ? "परीक्षण सीमाएं" : "Test Limits",
       prompt: "What are the chemical testing limits for drinking water under IS 10500:2012?",
-      desc: "Retrieves permissible and acceptable limits for TDS, pH, lead, and pesticides.",
+      desc: language === "hi" ? "TDS, pH, सीसा (Lead) और कीटनाशकों के लिए स्वीकार्य सीमाएं।" : "Retrieves permissible and acceptable limits for TDS, pH, lead, and pesticides.",
     },
     {
       icon: Globe2,
       title: "हिन्दी में प्रश्न (Bilingual)",
       tag: "हिन्दी / English",
       prompt: "पीने के पानी के लिए BIS मानक क्या है और कौन से टेस्ट अनिवार्य हैं?",
-      desc: "Demonstrates cross-lingual Devanagari query grounding and technical preservation.",
+      desc: language === "hi" ? "देवनागरी लिपि में तकनीकी संदर्भ और BIS क्लॉज सत्यापन।" : "Demonstrates cross-lingual Devanagari query grounding and technical preservation.",
     },
   ];
 
@@ -51,11 +54,14 @@ export function ChatEmptyState({ onSelectPrompt }: ChatEmptyStateProps) {
       </div>
 
       <h2 className="mt-5 text-xl font-extrabold tracking-tight text-navy-900 sm:text-2xl dark:text-white">
-        Bureau of Indian Standards AI Intelligence
+        {language === "hi"
+          ? "भारतीय मानक ब्यूरो AI इंटेलिजेंस"
+          : "Bureau of Indian Standards AI Intelligence"}
       </h2>
       <p className="mt-2 max-w-lg text-xs leading-relaxed text-muted-foreground sm:text-sm">
-        Ask regulatory questions about 19,000+ Indian Standards, Quality Control Orders (QCOs),
-        permissible test limits, and ISI Mark certification pathways.
+        {language === "hi"
+          ? "19,000+ भारतीय मानकों, गुणवत्ता नियंत्रण आदेशों (QCOs), अनुमेय परीक्षण सीमाओं और ISI मार्क प्रमाणन मार्गों के बारे में विनियामक प्रश्न पूछें।"
+          : "Ask regulatory questions about 19,000+ Indian Standards, Quality Control Orders (QCOs), permissible test limits, and ISI Mark certification pathways."}
       </p>
 
       {/* 4 Clickable Example Cards */}

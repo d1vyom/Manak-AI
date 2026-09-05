@@ -130,6 +130,48 @@ async function runE2ETests() {
     }
   });
 
+  // 5. Deep Bilingual Switching Across Explore & Compliance
+  await testStep("Deep bilingual toggle updates Explore and Compliance pages to Hindi", async () => {
+    // Go to Explore in Hindi
+    await page.goto(`${baseUrl}/explore`);
+    await page.waitForSelector("h1");
+    await page.click("button:has-text('हिन्दी')");
+    await page.waitForTimeout(300);
+
+    const exploreHeading = await page.textContent("h1");
+    if (!exploreHeading?.includes("भारतीय मानक अन्वेषक")) {
+      throw new Error(`Expected Hindi title "भारतीय मानक अन्वेषक", got: ${exploreHeading}`);
+    }
+
+    const tableHeader = await page.textContent("thead");
+    if (!tableHeader?.includes("मानक पदनाम") || !tableHeader?.includes("अनुपालन स्थिति")) {
+      throw new Error(`Expected Hindi table column headers, got: ${tableHeader}`);
+    }
+
+    // Navigate to Compliance via navigation link
+    await page.click("a[href='/compliance']");
+    await page.waitForTimeout(400);
+    const complianceHeading = await page.textContent("h1");
+    if (!complianceHeading?.includes("अनुपालन अंतर विश्लेषण एवं ऑडिट उपकरण")) {
+      throw new Error(`Expected Hindi compliance title, got: ${complianceHeading}`);
+    }
+
+    // Reset back to English
+    await page.click("button:has-text('English')");
+    await page.waitForTimeout(300);
+  });
+
+
+  // 6. Chat Page UX: Zero double scrollbars (Footer suppressed) and Mobile Drawer
+  await testStep("Chat page suppresses Footer to prevent double scrollbars", async () => {
+    await page.goto(`${baseUrl}/chat`);
+    await page.waitForSelector("h1");
+    const footerCount = await page.locator("footer").count();
+    if (footerCount > 0) {
+      throw new Error("Footer should be suppressed on /chat route to ensure zero outer viewport overflow");
+    }
+  });
+
   await browser.close();
 
   console.log("\n===============================================================");

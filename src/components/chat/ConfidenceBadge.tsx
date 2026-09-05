@@ -4,6 +4,8 @@
 import { useState } from "react";
 import { ShieldCheck, Info, CheckCircle2, AlertCircle } from "lucide-react";
 import { ConfidenceResult } from "@/types/rag";
+import { useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 
 interface ConfidenceBadgeProps {
   confidence?: ConfidenceResult;
@@ -12,6 +14,7 @@ interface ConfidenceBadgeProps {
 
 export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeProps) {
   const [showTooltip, setShowTooltip] = useState(false);
+  const { language } = useAppStore();
 
   if (!confidence) return null;
 
@@ -25,6 +28,7 @@ export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeP
       text: "text-emerald-700 dark:text-emerald-300",
       dot: "bg-emerald-500",
       icon: CheckCircle2,
+      label: language === "hi" ? "उच्च" : "HIGH",
     },
     MEDIUM: {
       bg: "bg-amber-500/10 dark:bg-amber-950/40",
@@ -32,6 +36,7 @@ export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeP
       text: "text-amber-700 dark:text-amber-300",
       dot: "bg-amber-500",
       icon: AlertCircle,
+      label: language === "hi" ? "मध्यम" : "MEDIUM",
     },
     LOW: {
       bg: "bg-rose-500/10 dark:bg-rose-950/40",
@@ -39,6 +44,7 @@ export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeP
       text: "text-rose-700 dark:text-rose-300",
       dot: "bg-rose-500",
       icon: AlertCircle,
+      label: language === "hi" ? "कम" : "LOW",
     },
   };
 
@@ -57,7 +63,7 @@ export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeP
       >
         <span className={`h-1.5 w-1.5 rounded-full ${currentStyle.dot} animate-pulse`} />
         <span>{percentage}%</span>
-        <span>{level} Grounding</span>
+        <span>{currentStyle.label} {t("groundingLabel", language)}</span>
         <Info className="h-3 w-3 opacity-60 ml-0.5" />
       </button>
 
@@ -67,7 +73,7 @@ export function ConfidenceBadge({ confidence, className = "" }: ConfidenceBadgeP
           <div className="flex items-center justify-between border-b border-border pb-2">
             <div className="flex items-center gap-1.5 font-bold text-xs text-navy-900 dark:text-white">
               <ShieldCheck className="h-4 w-4 text-saffron-500" />
-              <span>Retrieval Grounding Score</span>
+              <span>{t("retrievalScoreLabel", language)}</span>
             </div>
             <span className={`text-xs font-extrabold ${currentStyle.text}`}>
               {percentage}%

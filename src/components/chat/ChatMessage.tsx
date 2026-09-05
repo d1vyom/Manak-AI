@@ -6,6 +6,7 @@ import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { Shield, Sparkles, User, Copy, Check, FileText, ExternalLink } from "lucide-react";
 import { ChatMessage as ChatMessageType, useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 import { ConfidenceBadge } from "./ConfidenceBadge";
 import { MandatoryBadge } from "./MandatoryBadge";
 import { CitationBadge } from "./CitationBadge";
@@ -16,7 +17,7 @@ interface ChatMessageProps {
 }
 
 export function ChatMessage({ message }: ChatMessageProps) {
-  const { isDrawerOpen, setIsDrawerOpen, setActiveCitations } = useAppStore();
+  const { isDrawerOpen, setIsDrawerOpen, setActiveCitations, language } = useAppStore();
   const [copied, setCopied] = useState(false);
 
   const isAssistant = message.role === "assistant";
@@ -53,9 +54,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
   }
 
   // Pre-process text to replace citation references [1], [2] with a placeholder token that we render
-  // In ReactMarkdown, we can define custom renderers for `p`, `li`, etc., or parse inline
   const renderTextWithCitations = (text: string) => {
-    // Regex for [1], [2], [1, 2]
     const parts: (string | React.ReactNode)[] = [];
     const regex = /\[(\d+(?:,\s*\d+)*)\]/g;
     let lastIndex = 0;
@@ -97,10 +96,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
         <div className="flex flex-wrap items-center justify-between gap-2 border-b border-navy-100 pb-2.5 dark:border-navy-800">
           <div className="flex items-center gap-2">
             <span className="text-xs font-bold tracking-tight text-navy-900 dark:text-white">
-              Manak AI Assistant
+              {language === "hi" ? "मानक AI सहायक" : "Manak AI Assistant"}
             </span>
             <span className="rounded bg-navy-100 px-1.5 py-0.2 text-[10px] font-semibold text-navy-800 dark:bg-navy-800 dark:text-navy-300">
-              BIS Intelligence
+              {language === "hi" ? "BIS इंटेलिजेंस" : "BIS Intelligence"}
             </span>
           </div>
 
@@ -192,7 +191,7 @@ export function ChatMessage({ message }: ChatMessageProps) {
         {message.isStreaming && (
           <div className="flex items-center gap-1.5 text-xs text-saffron-600 dark:text-saffron-400 mt-2 font-medium">
             <span className="h-2 w-2 rounded-full bg-saffron-500 animate-ping" />
-            <span>Analyzing Indian Standards & QCO gazettes...</span>
+            <span>{t("chatStreamingIndicator", language)}</span>
           </div>
         )}
 
@@ -212,12 +211,12 @@ export function ChatMessage({ message }: ChatMessageProps) {
               {copied ? (
                 <>
                   <Check className="h-3.5 w-3.5 text-emerald-600" />
-                  <span className="text-emerald-600 font-medium">Copied</span>
+                  <span className="text-emerald-600 font-medium">{t("chatCopied", language)}</span>
                 </>
               ) : (
                 <>
                   <Copy className="h-3.5 w-3.5" />
-                  <span>Copy</span>
+                  <span>{t("chatCopy", language)}</span>
                 </>
               )}
             </button>
@@ -229,16 +228,17 @@ export function ChatMessage({ message }: ChatMessageProps) {
                 className="inline-flex items-center gap-1 font-semibold text-saffron-600 hover:text-saffron-700 dark:text-saffron-400 transition-colors"
               >
                 <FileText className="h-3.5 w-3.5" />
-                <span>View Sources ({message.citations.length})</span>
+                <span>{t("chatViewSources", language)} ({message.citations.length})</span>
               </button>
             )}
           </div>
 
           <span className="text-[10px] text-muted-foreground/80">
-            Strict anti-hallucination verified • {message.timestamp}
+            {t("chatAntiHallucination", language)} • {message.timestamp}
           </span>
         </div>
       </div>
     </div>
   );
 }
+

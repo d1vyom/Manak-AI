@@ -5,6 +5,7 @@ import { X, ShieldCheck, BookOpen, ExternalLink, Network, Info } from "lucide-re
 import { useAppStore } from "@/lib/store/app-store";
 import { CitationCard } from "./CitationCard";
 import { getRelatedStandards } from "@/lib/data/standards-graph";
+import { t } from "@/lib/utils/i18n";
 
 interface CitationPanelProps {
   className?: string;
@@ -12,7 +13,7 @@ interface CitationPanelProps {
 }
 
 export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
-  const { activeCitations, isDrawerOpen, setIsDrawerOpen } = useAppStore();
+  const { activeCitations, isDrawerOpen, setIsDrawerOpen, language } = useAppStore();
 
   const handleClose = () => {
     setIsDrawerOpen(false);
@@ -44,10 +45,10 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
           </div>
           <div>
             <h3 className="text-xs font-bold uppercase tracking-wider text-navy-900 dark:text-white">
-              Evidence & Citations
+              {t("panelEvidenceTitle", language)}
             </h3>
             <span className="text-[11px] text-muted-foreground">
-              Verifiable Gazette & Clause Sources
+              {t("panelEvidenceSubtitle", language)}
             </span>
           </div>
         </div>
@@ -55,7 +56,7 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
         <div className="flex items-center gap-2">
           {activeCitations.length > 0 && (
             <span className="inline-flex items-center rounded-full bg-saffron-100 px-2 py-0.5 text-xs font-bold text-saffron-800 dark:bg-saffron-950/80 dark:text-saffron-300">
-              {activeCitations.length} {activeCitations.length === 1 ? "Source" : "Sources"}
+              {activeCitations.length} {activeCitations.length === 1 ? t("panelSourceCount", language) : t("panelSourcesCount", language)}
             </span>
           )}
           <button
@@ -75,10 +76,10 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
           <div className="flex h-64 flex-col items-center justify-center rounded-xl border border-dashed border-navy-200 p-6 text-center dark:border-navy-800">
             <BookOpen className="h-8 w-8 text-muted-foreground/50" />
             <h4 className="mt-3 text-xs font-bold text-navy-800 dark:text-navy-200">
-              No Active Citations
+              {t("panelNoCitations", language)}
             </h4>
             <p className="mt-1 text-[11px] text-muted-foreground max-w-[220px]">
-              Ask a question about BIS standards or ISI compliance. Clause excerpts and gazette links will populate here.
+              {t("panelNoCitationsDesc", language)}
             </p>
           </div>
         ) : (
@@ -94,10 +95,10 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
               <div className="mt-6 rounded-xl border border-navy-200/80 bg-white p-3.5 shadow-sm dark:border-navy-800 dark:bg-navy-900/60">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-navy-900 dark:text-white">
                   <Network className="h-3.5 w-3.5 text-saffron-500" />
-                  <span>Related Companion Standards</span>
+                  <span>{t("panelRelatedStandards", language)}</span>
                 </div>
                 <p className="mt-1 text-[11px] text-muted-foreground">
-                  Standards normatively referenced by the cited documents:
+                  {t("panelRelatedStandardsDesc", language)}
                 </p>
 
                 <div className="mt-2.5 space-y-2">
@@ -131,7 +132,7 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
         <div className="flex items-center justify-between">
           <span className="flex items-center gap-1">
             <Info className="h-3.5 w-3.5 text-saffron-500" />
-            <span>Anti-Hallucination Verified</span>
+            <span>{t("panelAntiHallucination", language)}</span>
           </span>
           <a
             href="https://services.bis.gov.in"
@@ -139,7 +140,7 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
             rel="noopener noreferrer"
             className="flex items-center gap-1 font-semibold text-navy-800 hover:text-saffron-600 dark:text-navy-200 dark:hover:text-saffron-400"
           >
-            <span>e-BIS Portal</span>
+            <span>{t("panelEBisPortal", language)}</span>
             <ExternalLink className="h-3 w-3" />
           </a>
         </div>

@@ -14,18 +14,18 @@ import {
   FileCheck2,
   Printer,
   RotateCcw,
-  BookOpen,
   Info,
-  ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
-import { GapAnalysisResult, GapAnalysisInput, RequirementGap } from "@/types/compliance";
+import { GapAnalysisResult, GapAnalysisInput } from "@/types/compliance";
 import { useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 
 // Preset product profiles for instant demonstration
 const PRESETS = [
   {
     name: "Stainless Steel Water Bottles",
+    hindiName: "स्टेनलेस स्टील पानी की बोतलें",
     standard: "IS 14543:2016",
     material: "Grade AISI 304 (18% Cr, 8% Ni)",
     capacity: "750 ml",
@@ -34,6 +34,7 @@ const PRESETS = [
   },
   {
     name: "Packaged Drinking Water",
+    hindiName: "पैकेजबंद पेयजल",
     standard: "IS 14543:2016",
     material: "PET Bottle (Food Grade IS 12252)",
     capacity: "1000 ml",
@@ -42,6 +43,7 @@ const PRESETS = [
   },
   {
     name: "Domestic Pressure Cooker",
+    hindiName: "घरेलू प्रेशर कुकर",
     standard: "IS 2347:2017",
     material: "Wrought Aluminium Alloy IS 21",
     capacity: "5 Litres",
@@ -50,6 +52,7 @@ const PRESETS = [
   },
   {
     name: "Safety of Toys (Mechanical & Chemical)",
+    hindiName: "खिलौनों की सुरक्षा (यांत्रिक एवं रासायनिक)",
     standard: "IS 9873",
     material: "ABS Plastic & Non-Toxic Paint",
     capacity: "N/A",
@@ -133,7 +136,7 @@ function ComplianceAuditContainer() {
   const handleRunAudit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!product.trim()) {
-      setError("Please specify the product name or select a preset.");
+      setError(language === "hi" ? "कृपया उत्पाद का नाम निर्दिष्ट करें या कोई डेमो प्रोफाइल चुनें।" : "Please specify the product name or select a preset.");
       return;
     }
 
@@ -165,7 +168,7 @@ function ComplianceAuditContainer() {
       setResult(data);
     } catch (err: any) {
       console.error("Gap analysis error:", err);
-      setError("Failed to generate compliance gap analysis. Please try again.");
+      setError(language === "hi" ? "अनुपालन अंतर विश्लेषण उत्पन्न करने में विफल। कृपया पुनः प्रयास करें।" : "Failed to generate compliance gap analysis. Please try again.");
     } finally {
       setLoading(false);
     }
@@ -188,6 +191,15 @@ function ComplianceAuditContainer() {
     return req.category === filterCategory;
   }) || [];
 
+  const filterTabs = [
+    { id: "all", label: t("filterAllReqs", language) },
+    { id: "material", label: t("filterMaterial", language) },
+    { id: "testing", label: t("filterTesting", language) },
+    { id: "manufacturing", label: t("filterManufacturing", language) },
+    { id: "certification", label: t("filterCertification", language) },
+    { id: "documentation", label: t("filterDocumentation", language) },
+  ];
+
   return (
     <div className="container mx-auto max-w-7xl px-4 py-8 sm:px-6">
       {/* Header */}
@@ -199,14 +211,14 @@ function ComplianceAuditContainer() {
           <div>
             <div className="flex items-center gap-2">
               <h1 className="text-xl font-extrabold tracking-tight text-navy-900 dark:text-white sm:text-2xl">
-                Compliance Gap Analysis & Audit Tool
+                {t("complianceTitle", language)}
               </h1>
               <span className="rounded-full bg-saffron-100 px-2.5 py-0.5 text-xs font-bold text-saffron-800 dark:bg-saffron-950 dark:text-saffron-300">
-                BIS ISI Readiness
+                {t("isiReadinessBadge", language)}
               </span>
             </div>
             <p className="mt-1 text-xs text-muted-foreground sm:text-sm">
-              Evaluate your manufacturing, chemical composition, and testing specs against applicable Indian Standards (IS).
+              {t("complianceSubtitle", language)}
             </p>
           </div>
         </div>
@@ -219,7 +231,7 @@ function ComplianceAuditContainer() {
               className="inline-flex items-center gap-1.5 rounded-lg border border-navy-200 bg-white px-3 py-1.5 text-xs font-semibold text-navy-900 shadow-sm hover:bg-slate-50 dark:border-navy-800 dark:bg-navy-900 dark:text-white"
             >
               <Printer className="h-3.5 w-3.5 text-saffron-500" />
-              <span>Print Report</span>
+              <span>{t("btnPrintReport", language)}</span>
             </button>
             <button
               type="button"
@@ -227,7 +239,7 @@ function ComplianceAuditContainer() {
               className="inline-flex items-center gap-1.5 rounded-lg bg-navy-800 px-3 py-1.5 text-xs font-semibold text-white shadow-sm hover:bg-navy-700"
             >
               <RotateCcw className="h-3.5 w-3.5 text-saffron-400" />
-              <span>New Audit</span>
+              <span>{t("btnNewAudit", language)}</span>
             </button>
           </div>
         )}
@@ -242,10 +254,10 @@ function ComplianceAuditContainer() {
               {/* Preset Quick Fill */}
               <div className="rounded-2xl border border-navy-100 bg-navy-50/50 p-5 dark:border-navy-800 dark:bg-navy-900/40">
                 <span className="text-xs font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-                  Quick-Fill Verified Demo Presets
+                  {t("presetsTitle", language)}
                 </span>
                 <p className="mt-1 text-xs text-muted-foreground">
-                  Select a product profile to pre-fill tested materials, parameters, and standards:
+                  {t("presetsDesc", language)}
                 </p>
 
                 <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -268,8 +280,13 @@ function ComplianceAuditContainer() {
                           {p.standard}
                         </span>
                       </div>
+                      {language === "hi" && (
+                        <span className="text-[11px] text-navy-700 dark:text-navy-300 font-medium mt-0.5">
+                          {p.hindiName}
+                        </span>
+                      )}
                       <span className="mt-1 text-[11px] text-muted-foreground line-clamp-1">
-                        Material: {p.material}
+                        {p.material}
                       </span>
                     </button>
                   ))}
@@ -279,13 +296,13 @@ function ComplianceAuditContainer() {
               {/* Product Info Section */}
               <div className="rounded-2xl border border-navy-200/80 bg-white p-5 shadow-sm dark:border-navy-800 dark:bg-navy-900/60 space-y-4">
                 <h3 className="text-xs font-bold uppercase tracking-wider text-navy-900 dark:text-white">
-                  1. Product & Material Details
+                  {t("formSection1", language)}
                 </h3>
 
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs font-semibold text-navy-800 dark:text-navy-200">
-                      Product Name / Category *
+                      {t("productNameLabel", language)}
                     </label>
                     <input
                       type="text"
@@ -299,7 +316,7 @@ function ComplianceAuditContainer() {
 
                   <div>
                     <label className="block text-xs font-semibold text-navy-800 dark:text-navy-200">
-                      Material Specification & Grade
+                      {t("materialGradeLabel", language)}
                     </label>
                     <input
                       type="text"
@@ -314,7 +331,7 @@ function ComplianceAuditContainer() {
                 <div className="grid gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-xs font-semibold text-navy-800 dark:text-navy-200">
-                      Capacity / Rating / Size
+                      {t("capacityLabel", language)}
                     </label>
                     <input
                       type="text"
@@ -327,7 +344,7 @@ function ComplianceAuditContainer() {
 
                   <div>
                     <label className="block text-xs font-semibold text-navy-800 dark:text-navy-200">
-                      Manufacturing Process Summary
+                      {t("manufacturingProcessLabel", language)}
                     </label>
                     <input
                       type="text"
@@ -344,14 +361,14 @@ function ComplianceAuditContainer() {
               <div className="rounded-2xl border border-navy-200/80 bg-white p-5 shadow-sm dark:border-navy-800 dark:bg-navy-900/60 space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-navy-900 dark:text-white">
-                    2. Laboratory Tests Currently Performed
+                    {t("formSection2", language)}
                   </h3>
                   <span className="text-[11px] text-muted-foreground">
-                    {selectedTests.length} selected
+                    {selectedTests.length} {language === "hi" ? "चयनित" : "selected"}
                   </span>
                 </div>
                 <p className="text-[11px] text-muted-foreground">
-                  Select tests that your factory or third-party laboratory has already conducted:
+                  {t("testsDesc", language)}
                 </p>
 
                 <div className="grid gap-2 sm:grid-cols-2 pt-1">
@@ -380,10 +397,10 @@ function ComplianceAuditContainer() {
               <div className="rounded-2xl border border-navy-200/80 bg-white p-5 shadow-sm dark:border-navy-800 dark:bg-navy-900/60 space-y-3">
                 <div className="flex items-center justify-between">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-navy-900 dark:text-white">
-                    3. Factory Infrastructure & Certifications
+                    {t("formSection3", language)}
                   </h3>
                   <span className="text-[11px] text-muted-foreground">
-                    {selectedCerts.length} selected
+                    {selectedCerts.length} {language === "hi" ? "चयनित" : "selected"}
                   </span>
                 </div>
 
@@ -425,12 +442,12 @@ function ComplianceAuditContainer() {
                 {loading ? (
                   <>
                     <Sparkles className="h-4 w-4 animate-spin" />
-                    <span>Auditing Specifications Against BIS Standards...</span>
+                    <span>{t("auditingRunning", language)}</span>
                   </>
                 ) : (
                   <>
                     <CheckSquare className="h-4 w-4" />
-                    <span>Run Compliance Gap Analysis</span>
+                    <span>{t("runAuditButton", language)}</span>
                     <ArrowRight className="h-4 w-4" />
                   </>
                 )}
@@ -443,10 +460,10 @@ function ComplianceAuditContainer() {
             <div className="rounded-2xl border border-navy-200/80 bg-white p-5 shadow-sm dark:border-navy-800 dark:bg-navy-900/60">
               <div className="flex items-center gap-2 text-xs font-bold text-navy-900 dark:text-white">
                 <Info className="h-4 w-4 text-saffron-500" />
-                <span>How Gap Analysis Works</span>
+                <span>{t("sidebarHowItWorks", language)}</span>
               </div>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground">
-                Manak AI evaluates your raw materials, testing limits, and factory quality control procedures against the normative requirements of the Bureau of Indian Standards.
+                {t("sidebarHowItWorksDesc", language)}
               </p>
 
               <div className="mt-4 space-y-3 text-xs">
@@ -455,8 +472,8 @@ function ComplianceAuditContainer() {
                     ✓
                   </span>
                   <div>
-                    <h5 className="font-bold text-navy-900 dark:text-white">Satisfied Requirements</h5>
-                    <p className="text-[11px] text-muted-foreground">Parameters your product already fulfills.</p>
+                    <h5 className="font-bold text-navy-900 dark:text-white">{t("satisfiedLabel", language)}</h5>
+                    <p className="text-[11px] text-muted-foreground">{t("satisfiedDesc", language)}</p>
                   </div>
                 </div>
 
@@ -465,8 +482,8 @@ function ComplianceAuditContainer() {
                     ✕
                   </span>
                   <div>
-                    <h5 className="font-bold text-navy-900 dark:text-white">Critical Regulatory Gaps</h5>
-                    <p className="text-[11px] text-muted-foreground">Missing mandatory tests or material non-compliances.</p>
+                    <h5 className="font-bold text-navy-900 dark:text-white">{t("criticalGapsLabel", language)}</h5>
+                    <p className="text-[11px] text-muted-foreground">{t("criticalGapsDesc", language)}</p>
                   </div>
                 </div>
 
@@ -475,8 +492,8 @@ function ComplianceAuditContainer() {
                     !
                   </span>
                   <div>
-                    <h5 className="font-bold text-navy-900 dark:text-white">Verification Required</h5>
-                    <p className="text-[11px] text-muted-foreground">Tests needing factory inspection or lab reports.</p>
+                    <h5 className="font-bold text-navy-900 dark:text-white">{t("needsVerificationLabel", language)}</h5>
+                    <p className="text-[11px] text-muted-foreground">{t("needsVerificationDesc", language)}</p>
                   </div>
                 </div>
               </div>
@@ -485,10 +502,10 @@ function ComplianceAuditContainer() {
             <div className="rounded-2xl border border-navy-700 bg-gradient-to-br from-navy-900 to-navy-800 p-5 text-white shadow-md">
               <div className="flex items-center gap-2 text-xs font-bold text-saffron-400">
                 <ShieldAlert className="h-4 w-4" />
-                <span>Mandatory QCO Protection</span>
+                <span>{t("qcoProtectionTitle", language)}</span>
               </div>
               <p className="mt-2 text-xs leading-relaxed text-navy-100">
-                Selling non-certified products covered under a Quality Control Order (QCO) is illegal under Section 17 of the BIS Act, 2016, carrying heavy penalties and seizure.
+                {t("qcoProtectionDesc", language)}
               </p>
             </div>
           </div>
@@ -515,14 +532,14 @@ function ComplianceAuditContainer() {
               </div>
               <div>
                 <span className="text-[11px] font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-                  Audit Verdict
+                  {t("verdictTitle", language)}
                 </span>
                 <h3 className="text-base font-extrabold text-navy-900 dark:text-white">
                   {readinessPercent >= 75
-                    ? "Substantially Compliant"
+                    ? t("verdictHigh", language)
                     : readinessPercent >= 50
-                    ? "Partial Compliance"
-                    : "Significant Gaps Detected"}
+                    ? t("verdictMedium", language)
+                    : t("verdictLow", language)}
                 </h3>
                 <p className="text-[11px] text-muted-foreground">
                   {result.product} against {result.applicableStandards.join(", ")}
@@ -533,39 +550,39 @@ function ComplianceAuditContainer() {
             {/* Satisfied */}
             <div className="rounded-2xl border border-emerald-500/20 bg-emerald-50/40 p-4 dark:border-emerald-500/30 dark:bg-emerald-950/20">
               <span className="text-xs font-semibold text-emerald-800 dark:text-emerald-300">
-                Satisfied Requirements
+                {t("satisfiedLabel", language)}
               </span>
               <div className="mt-2 text-2xl font-extrabold text-emerald-700 dark:text-emerald-300">
                 {result.summary.satisfied}
               </div>
               <span className="text-[10px] text-emerald-600 dark:text-emerald-400">
-                Verified against BIS clauses
+                {t("verdictSatisfiedSub", language)}
               </span>
             </div>
 
             {/* Critical Gaps */}
             <div className="rounded-2xl border border-rose-500/20 bg-rose-50/40 p-4 dark:border-rose-500/30 dark:bg-rose-950/20">
               <span className="text-xs font-semibold text-rose-800 dark:text-rose-300">
-                Critical Gaps
+                {t("criticalGapsLabel", language)}
               </span>
               <div className="mt-2 text-2xl font-extrabold text-rose-700 dark:text-rose-300">
                 {result.summary.notSatisfied}
               </div>
               <span className="text-[10px] text-rose-600 dark:text-rose-400">
-                Hurdles for ISI certification
+                {t("verdictGapsSub", language)}
               </span>
             </div>
 
             {/* Needs Verification */}
             <div className="rounded-2xl border border-amber-500/20 bg-amber-50/40 p-4 dark:border-amber-500/30 dark:bg-amber-950/20">
               <span className="text-xs font-semibold text-amber-800 dark:text-amber-300">
-                Needs Verification
+                {t("needsVerificationLabel", language)}
               </span>
               <div className="mt-2 text-2xl font-extrabold text-amber-700 dark:text-amber-300">
                 {result.summary.needsVerification}
               </div>
               <span className="text-[10px] text-amber-600 dark:text-amber-400">
-                Pending factory evidence
+                {t("verdictVerifySub", language)}
               </span>
             </div>
           </div>
@@ -575,7 +592,7 @@ function ComplianceAuditContainer() {
             <div className="rounded-2xl border border-rose-500/30 bg-rose-50/60 p-5 dark:border-rose-500/40 dark:bg-rose-950/30">
               <div className="flex items-center gap-2 font-bold text-xs text-rose-900 dark:text-rose-200">
                 <AlertCircle className="h-4 w-4 text-rose-600" />
-                <span>Critical Compliance Gaps Requiring Immediate Remediation</span>
+                <span>{t("criticalGapsAlertTitle", language)}</span>
               </div>
               <ul className="mt-2.5 space-y-1.5 text-xs text-rose-950 dark:text-rose-200">
                 {result.summary.criticalGaps.map((gap, idx) => (
@@ -595,19 +612,12 @@ function ComplianceAuditContainer() {
               <div className="flex items-center gap-2">
                 <FileCheck2 className="h-4 w-4 text-saffron-500" />
                 <h4 className="text-xs font-bold uppercase tracking-wider text-navy-900 dark:text-white">
-                  Regulatory Requirements Checklist ({result.requirements.length})
+                  {t("checklistTitle", language)} ({result.requirements.length})
                 </h4>
               </div>
 
               <div className="flex flex-wrap items-center gap-1 text-xs">
-                {[
-                  { id: "all", label: "All Requirements" },
-                  { id: "material", label: "Material" },
-                  { id: "testing", label: "Testing" },
-                  { id: "manufacturing", label: "Manufacturing" },
-                  { id: "certification", label: "Certification" },
-                  { id: "documentation", label: "Documentation" },
-                ].map((tab) => (
+                {filterTabs.map((tab) => (
                   <button
                     key={tab.id}
                     type="button"
@@ -629,12 +639,12 @@ function ComplianceAuditContainer() {
               <table className="w-full text-left text-xs">
                 <thead className="border-b border-navy-100 bg-slate-50/80 text-[11px] font-bold uppercase tracking-wider text-navy-900 dark:border-navy-800 dark:bg-navy-950/40 dark:text-white">
                   <tr>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Category</th>
-                    <th className="px-4 py-3">BIS Requirement</th>
-                    <th className="px-4 py-3">Evidence / Current Spec</th>
-                    <th className="px-4 py-3">Standard Reference</th>
-                    <th className="px-4 py-3">Corrective Recommendation</th>
+                    <th className="px-4 py-3">{t("thStatus", language)}</th>
+                    <th className="px-4 py-3">{t("thCategory", language)}</th>
+                    <th className="px-4 py-3">{t("thBisReq", language)}</th>
+                    <th className="px-4 py-3">{t("thEvidence", language)}</th>
+                    <th className="px-4 py-3">{t("thStandardRef", language)}</th>
+                    <th className="px-4 py-3">{t("thRecommendation", language)}</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-navy-100 dark:divide-navy-800/60">
@@ -645,17 +655,17 @@ function ComplianceAuditContainer() {
                         {req.status === "SATISFIED" ? (
                           <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                             <ShieldCheck className="h-3 w-3" />
-                            SATISFIED
+                            {language === "hi" ? "SATISFIED (अनुपालित)" : "SATISFIED"}
                           </span>
                         ) : req.status === "NOT_SATISFIED" ? (
                           <span className="inline-flex items-center gap-1 rounded bg-rose-100 px-2 py-0.5 text-[10px] font-bold text-rose-800 dark:bg-rose-950/60 dark:text-rose-300">
                             <AlertCircle className="h-3 w-3" />
-                            CRITICAL GAP
+                            {language === "hi" ? "CRITICAL GAP (गंभीर कमी)" : "CRITICAL GAP"}
                           </span>
                         ) : (
                           <span className="inline-flex items-center gap-1 rounded bg-amber-100 px-2 py-0.5 text-[10px] font-bold text-amber-800 dark:bg-amber-950/60 dark:text-amber-300">
                             <AlertTriangle className="h-3 w-3" />
-                            NEEDS PROOF
+                            {language === "hi" ? "NEEDS PROOF (सत्यापन आवश्यक)" : "NEEDS PROOF"}
                           </span>
                         )}
                       </td>
@@ -701,10 +711,10 @@ function ComplianceAuditContainer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl border border-navy-200/80 bg-white p-6 shadow-sm dark:border-navy-800 dark:bg-navy-900/60">
             <div>
               <h4 className="text-sm font-bold text-navy-900 dark:text-white">
-                Need guidance on closing these compliance gaps?
+                {t("helpClosingGapsTitle", language)}
               </h4>
               <p className="mt-1 text-xs text-muted-foreground">
-                Ask Manak AI assistant for specific testing protocols, NABL lab options, and sample application forms.
+                {t("helpClosingGapsDesc", language)}
               </p>
             </div>
 
@@ -714,7 +724,7 @@ function ComplianceAuditContainer() {
                 className="inline-flex items-center gap-1.5 rounded-xl bg-saffron-500 px-4 py-2.5 text-xs font-bold text-white shadow-md hover:bg-saffron-600 transition-colors"
               >
                 <Sparkles className="h-3.5 w-3.5" />
-                <span>Ask AI to Fix Gaps</span>
+                <span>{t("btnAskAiFixGaps", language)}</span>
                 <ArrowRight className="h-3.5 w-3.5" />
               </Link>
             </div>

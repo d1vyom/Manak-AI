@@ -1,13 +1,19 @@
-// src/components/layout/Footer.tsx
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { ShieldCheck, ExternalLink, Shield } from "lucide-react";
 import { useAppStore } from "@/lib/store/app-store";
 import { t } from "@/lib/utils/i18n";
 
 export function Footer() {
+  const pathname = usePathname();
   const { language } = useAppStore();
+
+  // Hide footer on full-height chat workspace to prevent double scrollbars
+  if (pathname === "/chat") {
+    return null;
+  }
 
   return (
     <footer className="border-t border-navy-700/10 bg-white dark:bg-navy-950 dark:border-navy-900 py-8">
@@ -18,7 +24,7 @@ export function Footer() {
               <Shield className="h-4 w-4" />
             </div>
             <span>
-              <strong>Manak AI</strong> — Built for <strong>Smart India Hackathon 2026</strong> (Problem Statement SIH26107).
+              <strong>Manak AI</strong> — {t("footerHackathon", language)}
             </span>
           </div>
 
@@ -29,7 +35,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="hover:text-navy-900 dark:hover:text-white flex items-center gap-1 transition-colors"
             >
-              <span>BIS Official Portal</span>
+              <span>{t("footerPortal", language)}</span>
               <ExternalLink className="h-3 w-3 text-saffron-500" />
             </Link>
             <span>•</span>
@@ -39,7 +45,7 @@ export function Footer() {
               rel="noopener noreferrer"
               className="hover:text-navy-900 dark:hover:text-white flex items-center gap-1 transition-colors"
             >
-              <span>e-BIS Services (Manakonline)</span>
+              <span>{t("footerEBis", language)}</span>
               <ExternalLink className="h-3 w-3 text-saffron-500" />
             </Link>
           </div>
@@ -52,3 +58,4 @@ export function Footer() {
     </footer>
   );
 }
+

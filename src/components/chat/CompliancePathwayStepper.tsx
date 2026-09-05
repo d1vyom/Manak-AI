@@ -6,6 +6,8 @@ import { ChevronDown, ChevronUp, GitFork, CheckCircle2, ShieldAlert, Clock, Arro
 import { CompliancePathway } from "@/types/compliance";
 import { CitationBadge } from "./CitationBadge";
 import Link from "next/link";
+import { useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 
 interface CompliancePathwayStepperProps {
   pathway: CompliancePathway;
@@ -18,6 +20,7 @@ export function CompliancePathwayStepper({
 }: CompliancePathwayStepperProps) {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const [activeStep, setActiveStep] = useState<number | null>(null);
+  const { language } = useAppStore();
 
   if (!pathway || !pathway.steps || pathway.steps.length === 0) return null;
 
@@ -35,10 +38,10 @@ export function CompliancePathwayStepper({
           </div>
           <div>
             <h4 className="text-xs font-bold text-navy-900 dark:text-white">
-              7-Step BIS Certification Roadmap
+              {t("stepperTitle", language)}
             </h4>
             <span className="text-[11px] text-muted-foreground">
-              Procedural pathway for {pathway.product}
+              {t("stepperSubtitle", language)} {pathway.product}
             </span>
           </div>
         </div>
@@ -96,11 +99,11 @@ export function CompliancePathwayStepper({
                       {isMandatory ? (
                         <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-1.5 py-0.2 text-[10px] font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                           <ShieldAlert className="h-2.5 w-2.5" />
-                          Mandatory
+                          {t("statusMandatory", language)}
                         </span>
                       ) : (
                         <span className="rounded bg-slate-100 px-1.5 py-0.2 text-[10px] font-medium text-slate-600 dark:bg-navy-800 dark:text-slate-300">
-                          Recommended
+                          {t("stepperRecommended", language)}
                         </span>
                       )}
                     </div>
@@ -112,7 +115,7 @@ export function CompliancePathwayStepper({
                     {/* Step References if available */}
                     {step.references && step.references.length > 0 && (
                       <div className="mt-1.5 flex items-center gap-1 text-[11px]">
-                        <span className="text-muted-foreground text-[10px]">Citations:</span>
+                        <span className="text-muted-foreground text-[10px]">{t("clause", language)}:</span>
                         {step.references.map((r) => (
                           <CitationBadge key={r.refId} refId={r.refId} citation={r} />
                         ))}
@@ -123,7 +126,7 @@ export function CompliancePathwayStepper({
                     {isSelected && step.details && step.details.length > 0 && (
                       <div className="mt-2.5 rounded-lg border border-navy-100 bg-white p-3 text-xs dark:border-navy-800 dark:bg-navy-950/80 animate-in fade-in duration-200">
                         <span className="text-[10px] font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-                          Action Checklist & Documentation
+                          {t("stepperChecklistTitle", language)}
                         </span>
                         <ul className="mt-2 space-y-1.5 text-[11px] text-muted-foreground">
                           {step.details.map((detail, idx) => (
@@ -144,13 +147,13 @@ export function CompliancePathwayStepper({
           {/* Quick link to Gap Analysis */}
           <div className="mt-6 flex items-center justify-between border-t border-border/60 pt-3">
             <span className="text-[11px] text-muted-foreground">
-              Want a gap analysis against your exact material specs?
+              {t("stepperGapPrompt", language)}
             </span>
             <Link
               href={`/compliance?product=${encodeURIComponent(pathway.product)}`}
               className="inline-flex items-center gap-1 text-xs font-bold text-saffron-600 hover:underline dark:text-saffron-400"
             >
-              <span>Run Gap Audit</span>
+              <span>{t("stepperRunAudit", language)}</span>
               <ArrowRight className="h-3 w-3" />
             </Link>
           </div>

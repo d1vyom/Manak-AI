@@ -12,6 +12,7 @@ import { CitationPanel } from "@/components/chat/CitationPanel";
 import { Citation } from "@/types/citations";
 import { ConfidenceResult } from "@/types/rag";
 import { CompliancePathway } from "@/types/compliance";
+import { t } from "@/lib/utils/i18n";
 
 function ChatContainer() {
   const searchParams = useSearchParams();
@@ -264,14 +265,14 @@ function ChatContainer() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-sm font-bold text-navy-900 dark:text-white sm:text-base">
-                  BIS Compliance Assistant
+                  {t("chatAssistantTitle", language)}
                 </h1>
                 <span className="hidden sm:inline-flex rounded bg-saffron-100 px-2 py-0.5 text-[10px] font-bold text-saffron-800 dark:bg-saffron-950/80 dark:text-saffron-300">
                   RAG Hybrid RRF
                 </span>
               </div>
               <p className="text-[11px] text-muted-foreground hidden sm:block">
-                Authoritative answers with clause-level citations and official gazette tracking
+                {t("chatAssistantSubtitle", language)}
               </p>
             </div>
           </div>
@@ -283,7 +284,7 @@ function ChatContainer() {
             className="flex lg:hidden items-center gap-1.5 rounded-lg border border-navy-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-navy-800 shadow-sm dark:border-navy-700 dark:bg-navy-900 dark:text-navy-100"
           >
             <FileText className="h-3.5 w-3.5 text-saffron-500" />
-            <span>Sources ({activeCitations.length})</span>
+            <span>{t("chatSourcesBtn", language)} ({activeCitations.length})</span>
           </button>
         </div>
 
@@ -313,6 +314,14 @@ function ChatContainer() {
         </div>
       </div>
 
+      {/* Mobile Drawer Backdrop */}
+      {isDrawerOpen && (
+        <div
+          className="fixed inset-0 top-16 z-30 bg-black/50 backdrop-blur-xs lg:hidden animate-in fade-in duration-200"
+          onClick={() => setIsDrawerOpen(false)}
+        />
+      )}
+
       {/* RIGHT PANEL: 40% Interactive Source Evidence Drawer (Desktop) */}
       <div
         className={`fixed inset-y-16 right-0 z-40 w-full sm:w-[420px] lg:static lg:inset-auto lg:w-[400px] xl:w-[460px] lg:flex transition-transform duration-300 ${
@@ -327,6 +336,7 @@ function ChatContainer() {
     </div>
   );
 }
+
 
 export default function ChatPage() {
   return (

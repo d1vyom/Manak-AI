@@ -103,15 +103,23 @@
     - Test 4: Standards Explorer opens details modal with normative clauses
     - Test 5: Compliance Gap Analysis loads demo presets and runs gap audit
     - Test 6: AI Chat queries BIS engine, streams tokens, and populates evidence drawer
-    - Result: 6/6 Passed (100% SUCCESS)
+    - Test 7: Deep bilingual toggle updates Explore and Compliance pages to Hindi
+    - Test 8: Chat page suppresses Footer to prevent double scrollbars
+    - Result: 8/8 Passed (100% SUCCESS)
+  - Pre-Phase 10 UI Audit & Bug Fixes:
+    - Full bilingual Devanagari localization across Explore, Compliance, Chat headers, CitationPanel, Stepper, Badges, and Footer
+    - Persistent language state in Zustand store across page navigations and refreshes
+    - Fixed chat route layout bug (Footer suppressed on `/chat` to eliminate double scrollbars)
+    - Added backdrop overlay to mobile drawer on `/chat` for clean dismiss UX
   - *Status*: Completed & Verified
-  - *Git Commit*: `406e959`
+  - *Git Commit*: `406e959` (Evaluations), `Upcoming` (UI & Bilingual Hardening)
 
 - [ ] **Phase 10: Production Deployment**
   - Vercel deployment configuration (`vercel.json`), function timeouts, streaming
   - Supabase connection pooling setup (pgbouncer port 6543 vs direct 5432)
   - Production build verification (`npm run build`)
   - *Git Commit*: Pending
+
 
 - [ ] **Phase 11: SIH Demo Rehearsal & Backup Guardrails**
   - Cached offline responses for 3 core demo queries (Manufacturer, Consumer, Hindi)

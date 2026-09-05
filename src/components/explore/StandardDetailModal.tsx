@@ -2,10 +2,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { X, ShieldAlert, ShieldCheck, BookOpen, ExternalLink, ArrowRight, CheckCircle2, Sparkles, FileText } from "lucide-react";
+import { X, ShieldAlert, ShieldCheck, BookOpen, ExternalLink, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import Link from "next/link";
 import { StandardSummary } from "@/types/api";
 import { getRelatedStandards } from "@/lib/data/standards-graph";
+import { useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 
 interface StandardDetailModalProps {
   standard: StandardSummary | null;
@@ -13,6 +15,7 @@ interface StandardDetailModalProps {
 }
 
 export function StandardDetailModal({ standard, onClose }: StandardDetailModalProps) {
+  const { language } = useAppStore();
   const [details, setDetails] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
@@ -53,11 +56,11 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
                 {standard.isMandatory ? (
                   <span className="inline-flex items-center gap-1 rounded bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800 dark:bg-emerald-950/60 dark:text-emerald-300">
                     <ShieldAlert className="h-3.5 w-3.5" />
-                    MANDATORY (ISI MARK)
+                    {t("mandatoryIsiMark", language)}
                   </span>
                 ) : (
                   <span className="rounded bg-navy-100 px-2 py-0.5 text-xs font-medium text-navy-700 dark:bg-navy-800 dark:text-navy-300">
-                    VOLUNTARY
+                    {t("statusVoluntary", language)}
                   </span>
                 )}
               </div>
@@ -83,7 +86,7 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
           {standard.scopeSummary && (
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-                Official Scope & Applicability
+                {t("modalScopeTitle", language)}
               </h4>
               <p className="mt-2 text-xs leading-relaxed text-muted-foreground sm:text-sm">
                 {standard.scopeSummary}
@@ -96,16 +99,16 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
             <div className="rounded-xl border border-emerald-500/30 bg-emerald-50/40 p-4 dark:border-emerald-500/20 dark:bg-emerald-950/20">
               <div className="flex items-center gap-2 text-xs font-bold text-emerald-800 dark:text-emerald-300">
                 <ShieldAlert className="h-4 w-4 text-emerald-600" />
-                <span>Gazette Quality Control Order (QCO) Reference</span>
+                <span>{t("modalQcoTitle", language)}</span>
               </div>
               <p className="mt-2 font-mono text-xs text-navy-900 dark:text-white font-semibold">
-                Order: {standard.qcoDetails.qcoNumber}
+                {t("modalQcoOrder", language)} {standard.qcoDetails.qcoNumber}
               </p>
               <p className="mt-0.5 text-xs text-muted-foreground">
                 {standard.qcoDetails.qcoTitle}
               </p>
               <p className="mt-1 text-[11px] text-emerald-700 dark:text-emerald-400">
-                Effective Enforcement Date: <strong>{standard.qcoDetails.effectiveDate}</strong>
+                {t("modalEffectiveDate", language)} <strong>{standard.qcoDetails.effectiveDate}</strong>
               </p>
             </div>
           )}
@@ -114,7 +117,7 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
           {details?.chunks && details.chunks.length > 0 && (
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-                Indexed Key Clauses & Requirements ({details.chunks.length})
+                {t("modalClausesTitle", language)} ({details.chunks.length})
               </h4>
               <div className="mt-3 space-y-2.5">
                 {details.chunks.map((chunk: any) => (
@@ -141,7 +144,7 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
           {related.length > 0 && (
             <div>
               <h4 className="text-xs font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-                Companion & Testing Standards
+                {t("modalCompanionTitle", language)}
               </h4>
               <div className="mt-3 grid gap-2 sm:grid-cols-2">
                 {related.map((rel, idx) => (
@@ -178,7 +181,7 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-navy-900 dark:hover:text-white"
           >
-            <span>Official BIS Record</span>
+            <span>{t("modalOfficialBisRecord", language)}</span>
             <ExternalLink className="h-3.5 w-3.5" />
           </a>
 
@@ -189,7 +192,7 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
               className="inline-flex items-center gap-1.5 rounded-lg border border-navy-300 bg-white px-3.5 py-2 text-xs font-bold text-navy-900 hover:bg-slate-50 dark:border-navy-700 dark:bg-navy-800 dark:text-white dark:hover:bg-navy-700 shadow-sm"
             >
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Audit Product</span>
+              <span>{t("modalAuditProduct", language)}</span>
             </Link>
 
             <Link
@@ -198,7 +201,7 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
               className="inline-flex items-center gap-1.5 rounded-lg bg-saffron-500 px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-saffron-600 transition-colors"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Ask AI Assistant</span>
+              <span>{t("modalAskAssistant", language)}</span>
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>
           </div>

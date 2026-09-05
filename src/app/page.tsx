@@ -3,16 +3,13 @@
 
 import Link from "next/link";
 import {
-  Shield,
   Search,
   FileCheck2,
   GitFork,
   ArrowRight,
   Sparkles,
   Award,
-  Globe2,
   FileText,
-  CheckCircle2,
   ShieldCheck,
   CheckSquare,
 } from "lucide-react";
@@ -24,14 +21,14 @@ export default function HomePage() {
 
   const exampleQueries = [
     {
-      title: "Manufacturer Query",
+      title: language === "hi" ? "निर्माता प्रश्न" : "Manufacturer Query",
       text: "I manufacture stainless steel water bottles. Which BIS standards apply?",
-      tag: "Mandatory QCO",
+      tag: language === "hi" ? "अनिवार्य QCO" : "Mandatory QCO",
     },
     {
-      title: "Consumer Query",
+      title: language === "hi" ? "उपभोक्ता प्रश्न" : "Consumer Query",
       text: "How do I verify if a pressure cooker has a valid ISI Mark?",
-      tag: "Consumer Safety",
+      tag: language === "hi" ? "उपभोक्ता सुरक्षा" : "Consumer Safety",
     },
     {
       title: "Hindi Query",
@@ -39,36 +36,44 @@ export default function HomePage() {
       tag: "हिन्दी / Multilingual",
     },
     {
-      title: "Testing Requirements",
+      title: language === "hi" ? "परीक्षण आवश्यकताएं" : "Testing Requirements",
       text: "What are the chemical testing limits for drinking water under IS 10500:2012?",
-      tag: "Clause Citations",
+      tag: language === "hi" ? "खंड संदर्भ" : "Clause Citations",
     },
   ];
 
   const features = [
     {
       icon: Search,
-      title: "Hybrid Standards Retrieval",
+      title: language === "hi" ? "हाइब्रिड मानक पुनर्प्राप्ति" : "Hybrid Standards Retrieval",
       description:
-        "Combines semantic pgvector embeddings with lexical keyword search (RRF fusion) to accurately index 19,000+ Indian Standards.",
+        language === "hi"
+          ? "19,000+ भारतीय मानकों को सटीकता से अनुक्रमित करने के लिए सिमेंटिक pgvector एम्बेडिंग और कीवर्ड सर्च (RRF) को जोड़ता है।"
+          : "Combines semantic pgvector embeddings with lexical keyword search (RRF fusion) to accurately index 19,000+ Indian Standards.",
     },
     {
       icon: FileCheck2,
-      title: "Clause-Level Verifiable Citations",
+      title: language === "hi" ? "खंड-स्तरीय सत्यापनीय संदर्भ" : "Clause-Level Verifiable Citations",
       description:
-        "Every factual answer cites the exact Standard Number, Clause, Section, and Page Number with direct source links to prevent hallucination.",
+        language === "hi"
+          ? "हर तथ्यात्मक उत्तर मतिभ्रम रोकने के लिए सटीक मानक संख्या, खंड, अनुभाग और पृष्ठ संख्या का हवाला देता है।"
+          : "Every factual answer cites the exact Standard Number, Clause, Section, and Page Number with direct source links to prevent hallucination.",
     },
     {
       icon: Award,
-      title: "Mandatory vs Voluntary Detection",
+      title: language === "hi" ? "अनिवार्य बनाम स्वैच्छिक स्थिति" : "Mandatory vs Voluntary Detection",
       description:
-        "Automatically identifies Quality Control Orders (QCOs) to distinguish whether compliance is legally mandatory or voluntary.",
+        language === "hi"
+          ? "गुणवत्ता नियंत्रण आदेशों (QCO) की पहचान करके स्वचालित रूप से भेद करता है कि अनुपालन कानूनी रूप से अनिवार्य है या स्वैच्छिक।"
+          : "Automatically identifies Quality Control Orders (QCOs) to distinguish whether compliance is legally mandatory or voluntary.",
     },
     {
       icon: GitFork,
-      title: "AI Compliance Pathway",
+      title: language === "hi" ? "AI अनुपालन प्रमाणन मार्ग" : "AI Compliance Pathway",
       description:
-        "Generates a complete step-by-step roadmap from material selection and lab testing to factory inspection and BIS ISI Mark application.",
+        language === "hi"
+          ? "सामग्री चयन और प्रयोगशाला परीक्षण से लेकर फैक्ट्री निरीक्षण और ISI मार्क आवेदन तक एक संपूर्ण चरणबद्ध रोडमैप बनाता है।"
+          : "Generates a complete step-by-step roadmap from material selection and lab testing to factory inspection and BIS ISI Mark application.",
     },
   ];
 
@@ -81,7 +86,7 @@ export default function HomePage() {
           <div className="mx-auto max-w-3xl text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-saffron-500/30 bg-saffron-500/10 px-3.5 py-1.5 text-xs font-semibold text-saffron-300 backdrop-blur">
               <Sparkles className="h-3.5 w-3.5 text-saffron-400" />
-              <span>Smart India Hackathon 2026 — Problem Statement SIH26107</span>
+              <span>{t("heroBadge", language)}</span>
             </div>
 
             <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl sm:leading-none">
@@ -97,9 +102,7 @@ export default function HomePage() {
             </h1>
 
             <p className="mt-6 text-base sm:text-lg text-navy-100 leading-relaxed max-w-2xl mx-auto">
-              {language === "hi"
-                ? "भारतीय निर्माताओं और उपभोक्ताओं के लिए तत्काल नियामक स्पष्टता। भारतीय मानक (IS), अनिवार्य QCO अधिसूचनाएं, खंड-स्तरीय परीक्षण सीमाएं और ISI प्रमाणन मार्ग तुरंत खोजें।"
-                : "Instant regulatory clarity for Indian manufacturers and consumers. Discover applicable Indian Standards (IS), mandatory QCO gazettes, clause-level requirements, and certification pathways in English & Hindi."}
+              {t("heroSubtitle", language)}
             </p>
 
             <div className="mt-10 flex flex-wrap items-center justify-center gap-3.5">
@@ -107,7 +110,7 @@ export default function HomePage() {
                 href="/chat"
                 className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-saffron-500 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-saffron-500/25 transition-all hover:bg-saffron-600 hover:shadow-saffron-500/40"
               >
-                <span>{language === "hi" ? "एआई सहायक शुरू करें" : "Launch AI Assistant"}</span>
+                <span>{t("launchAiAssistant", language)}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
@@ -115,34 +118,34 @@ export default function HomePage() {
                 className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all hover:bg-white/20"
               >
                 <FileText className="h-4 w-4 text-saffron-400" />
-                <span>{language === "hi" ? "मानक खोजें" : "Explore Standards"}</span>
+                <span>{t("exploreStandardsBtn", language)}</span>
               </Link>
               <Link
                 href="/compliance"
                 className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all hover:bg-white/20"
               >
                 <CheckSquare className="h-4 w-4 text-emerald-400" />
-                <span>{language === "hi" ? "गैप ऑडिट चलाएं" : "Run Gap Audit"}</span>
+                <span>{t("runGapAuditBtn", language)}</span>
               </Link>
             </div>
 
             {/* Quick Stats Banner */}
             <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-white/10 pt-8 text-left">
               <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
-                <div className="text-2xl font-extrabold text-saffron-400">19,000+</div>
-                <div className="text-[11px] text-navy-200 mt-0.5">Indian Standards Indexed</div>
+                <div className="text-2xl font-extrabold text-saffron-400">{t("statStandardsNum", language)}</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">{t("statStandardsLabel", language)}</div>
               </div>
               <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
-                <div className="text-2xl font-extrabold text-emerald-400">100%</div>
-                <div className="text-[11px] text-navy-200 mt-0.5">Clause-Level Citations</div>
+                <div className="text-2xl font-extrabold text-emerald-400">{t("statCitationsNum", language)}</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">{t("statCitationsLabel", language)}</div>
               </div>
               <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
-                <div className="text-2xl font-extrabold text-white">QCO Track</div>
-                <div className="text-[11px] text-navy-200 mt-0.5">Gazette Mandates Linked</div>
+                <div className="text-2xl font-extrabold text-white">{t("statQcoNum", language)}</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">{t("statQcoLabel", language)}</div>
               </div>
               <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
-                <div className="text-2xl font-extrabold text-saffron-300">Bilingual</div>
-                <div className="text-[11px] text-navy-200 mt-0.5">Hindi & English Grounding</div>
+                <div className="text-2xl font-extrabold text-saffron-300">{t("statBilingualNum", language)}</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">{t("statBilingualLabel", language)}</div>
               </div>
             </div>
           </div>
@@ -154,10 +157,10 @@ export default function HomePage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6">
           <div className="text-center mb-8">
             <h2 className="text-xs font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-              Interactive Demonstrations
+              {t("demoTitle", language)}
             </h2>
             <p className="mt-1 text-2xl font-bold text-navy-900 dark:text-white">
-              Try Common BIS Queries
+              {t("demoSubtitle", language)}
             </p>
           </div>
 
@@ -180,7 +183,7 @@ export default function HomePage() {
                   </p>
                 </div>
                 <div className="mt-4 flex items-center gap-1 text-xs font-medium text-saffron-600 group-hover:translate-x-0.5 transition-transform">
-                  <span>Ask query</span>
+                  <span>{language === "hi" ? "प्रश्न पूछें" : "Ask query"}</span>
                   <ArrowRight className="h-3 w-3" />
                 </div>
               </Link>
@@ -194,13 +197,13 @@ export default function HomePage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6">
           <div className="mx-auto max-w-2xl text-center">
             <h2 className="text-xs font-bold uppercase tracking-wider text-saffron-600 dark:text-saffron-400">
-              Enterprise Compliance Intelligence
+              {t("featuresTitle", language)}
             </h2>
             <p className="mt-2 text-3xl font-extrabold text-navy-900 dark:text-white">
-              Why Manak AI is Not Just Another Chatbot
+              {t("featuresSubtitle", language)}
             </p>
             <p className="mt-3 text-sm text-muted-foreground">
-              Built on strict anti-hallucination architectures, grounding every single claim in official gazette notifications and published Indian Standards.
+              {t("featuresDesc", language)}
             </p>
           </div>
 
@@ -237,9 +240,9 @@ export default function HomePage() {
                 <ShieldCheck className="h-4 w-4" />
                 <span>Section 17 BIS Act Compliance</span>
               </div>
-              <h3 className="text-xl font-bold">Ready to verify your product compliance?</h3>
+              <h3 className="text-xl font-bold">{t("ctaTitle", language)}</h3>
               <p className="mt-1 text-sm text-navy-200">
-                Audit your bill of materials and testing protocols against official Bureau of Indian Standards clauses in seconds.
+                {t("ctaDesc", language)}
               </p>
             </div>
             <div className="flex items-center gap-3 shrink-0">
@@ -247,13 +250,13 @@ export default function HomePage() {
                 href="/compliance"
                 className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
               >
-                <span>Run Gap Audit</span>
+                <span>{t("runGapAuditBtn", language)}</span>
               </Link>
               <Link
                 href="/chat"
                 className="inline-flex items-center gap-2 rounded-lg bg-saffron-500 px-6 py-3 text-sm font-bold text-white shadow hover:bg-saffron-600 transition-colors"
               >
-                <span>Launch Assistant</span>
+                <span>{t("launchAiAssistant", language)}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
             </div>

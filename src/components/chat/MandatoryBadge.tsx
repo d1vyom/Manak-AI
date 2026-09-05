@@ -3,6 +3,7 @@
 
 import { ShieldAlert, ShieldCheck, HelpCircle, Calendar } from "lucide-react";
 import { MandatoryStatus } from "@/types/rag";
+import { useAppStore } from "@/lib/store/app-store";
 
 interface MandatoryBadgeProps {
   status?: MandatoryStatus;
@@ -17,9 +18,11 @@ export function MandatoryBadge({
   effectiveDate,
   className = "",
 }: MandatoryBadgeProps) {
+  const { language } = useAppStore();
+
   const configs = {
     mandatory: {
-      label: "MANDATORY (ISI Mark Required)",
+      label: language === "hi" ? "MANDATORY (अनिवार्य ISI मार्क)" : "MANDATORY (ISI Mark Required)",
       bg: "bg-emerald-500/15 dark:bg-emerald-950/50",
       border: "border-emerald-600/30 dark:border-emerald-500/40",
       text: "text-emerald-800 dark:text-emerald-300",
@@ -27,7 +30,7 @@ export function MandatoryBadge({
       tagBg: "bg-emerald-600 text-white",
     },
     voluntary: {
-      label: "VOLUNTARY STANDARD",
+      label: language === "hi" ? "VOLUNTARY (स्वैच्छिक मानक)" : "VOLUNTARY STANDARD",
       bg: "bg-blue-500/15 dark:bg-blue-950/50",
       border: "border-blue-600/30 dark:border-blue-500/40",
       text: "text-blue-800 dark:text-blue-300",
@@ -35,7 +38,7 @@ export function MandatoryBadge({
       tagBg: "bg-blue-600 text-white",
     },
     conditional: {
-      label: "CONDITIONAL / UPCOMING QCO",
+      label: language === "hi" ? "CONDITIONAL (सशर्त / आगामी QCO)" : "CONDITIONAL / UPCOMING QCO",
       bg: "bg-amber-500/15 dark:bg-amber-950/50",
       border: "border-amber-600/30 dark:border-amber-500/40",
       text: "text-amber-800 dark:text-amber-300",
@@ -43,7 +46,7 @@ export function MandatoryBadge({
       tagBg: "bg-amber-600 text-white",
     },
     unknown: {
-      label: "STATUS VERIFICATION REQUIRED",
+      label: language === "hi" ? "स्थिति सत्यापन आवश्यक" : "STATUS VERIFICATION REQUIRED",
       bg: "bg-slate-500/15 dark:bg-slate-800/50",
       border: "border-slate-500/30 dark:border-slate-700",
       text: "text-slate-700 dark:text-slate-300",
@@ -68,7 +71,7 @@ export function MandatoryBadge({
       )}
       {effectiveDate && (
         <span className="text-[10px] opacity-75 ml-1">
-          (Eff: {effectiveDate})
+          ({language === "hi" ? "प्रभावी:" : "Eff:"} {effectiveDate})
         </span>
       )}
     </div>
