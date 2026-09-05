@@ -37,13 +37,14 @@
   - *Status*: Completed & Verified (Live Supabase queries tested, keyword search validated, Next.js build clean)
   - *Git Commit*: `6887e6c`
 
-- [ ] **Phase 4: RAG Pipeline Engine**
-  - Gemini client wrapper (`gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-embedding-2`)
-  - Entity & intent extraction (product, material, standard, clause, industry)
-  - Hybrid retrieval & evidence block assembly (`[REF_N | Standard | Clause | Page]`)
-  - Retrieval-grounded confidence scoring (HIGH / MEDIUM / LOW)
-  - Server-Sent Events (SSE) streaming API (`POST /api/chat`)
-  - *Git Commit*: Pending
+- [x] **Phase 4: RAG Pipeline Engine**
+  - Gemini client wrapper initialized (`gemini-3.6-flash` and `gemini-embedding-2`) with live API
+  - Structured entity & intent extraction (`src/lib/llm/entity-extraction.ts`)
+  - Hybrid retrieval & evidence block assembly (`src/lib/rag/evidence.ts`)
+  - Retrieval-grounded confidence scoring (`src/lib/rag/confidence.ts`) with mathematical signal weights
+  - End-to-end RAG orchestrator (`src/lib/rag/pipeline.ts`) with anti-hallucination prompts
+  - Server-Sent Events (SSE) streaming API route (`POST /api/chat`)
+  - *Status*: Completed & Verified (Live RAG pipeline test passed, 0 hallucinations detected, Next.js build clean)
 
 - [ ] **Phase 5: Citation Engine & Verification**
   - Strict citation regex parsing and reference map builder

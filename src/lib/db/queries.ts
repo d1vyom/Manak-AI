@@ -1,5 +1,5 @@
 // src/lib/db/queries.ts
-import { supabase } from "./supabase";
+import { getSupabaseClient } from "./supabase";
 import { RetrievalResult, ChunkType } from "@/types/rag";
 import { StandardSummary, StandardsResponse } from "@/types/api";
 import { SEED_DOCUMENTS, SEED_CHUNKS, SEED_QCOS } from "../data/seed-data";
@@ -29,7 +29,8 @@ export async function searchStandards(params: SearchParams): Promise<RetrievalRe
   } = params;
 
   // Try live Supabase RPC call if available
-  if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY && queryEmbedding && queryEmbedding.length === 768) {
+  const supabase = getSupabaseClient();
+  if (supabase && queryEmbedding && queryEmbedding.length === 768) {
     try {
       const { data, error } = await supabase.rpc("hybrid_search", {
         query_text: queryText,
