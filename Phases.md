@@ -120,8 +120,9 @@
   - Security headers (nosniff, X-Frame-Options, XSS protection, strict-origin-when-cross-origin)
   - Route handlers configured with `maxDuration` and `dynamic = "force-dynamic"`
   - Production build verification (`prisma generate && next build`) — 100% SUCCESS
-  - *Status*: Completed & Verified
-  - *Git Commit*: `13cd62a`
+  - **Live Production URL**: [https://manak-ai.vercel.app](https://manak-ai.vercel.app) (Alias: `https://manak-ah3oe4vxz-team-divyom.vercel.app`)
+  - *Status*: Deployed & Live
+  - *Git Commit*: `13cd62a` / `6df8f11`
 
 
 - [ ] **Phase 11: SIH Demo Rehearsal & Backup Guardrails**
