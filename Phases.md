@@ -24,6 +24,7 @@
   - QCO gazette notification records & metadata configs
   - Database seed script (`src/lib/db/seed.ts`) and typed dataset (`src/lib/data/seed-data.ts`)
   - *Status*: Completed & Verified (Python syntax checks pass, seed dataset validated, Next.js build clean)
+  - *Git Commit*: `d2586e7`
 
 - [ ] **Phase 3: Database & Hybrid Vector Search**
   - Supabase PostgreSQL schema migration (HNSW vector index + GIN tsvector)
