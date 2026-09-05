@@ -105,7 +105,7 @@
     - Test 6: AI Chat queries BIS engine, streams tokens, and populates evidence drawer
     - Result: 6/6 Passed (100% SUCCESS)
   - *Status*: Completed & Verified
-  - *Git Commit*: `fbbc9f1`
+  - *Git Commit*: `406e959`
 
 - [ ] **Phase 10: Production Deployment**
   - Vercel deployment configuration (`vercel.json`), function timeouts, streaming
