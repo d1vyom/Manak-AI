@@ -35,6 +35,7 @@
   - TypeScript query access layer (`src/lib/db/queries.ts`) with live Supabase & in-memory fallback
   - API endpoints `/api/standards` and `/api/search` implemented
   - *Status*: Completed & Verified (Live Supabase queries tested, keyword search validated, Next.js build clean)
+  - *Git Commit*: `6887e6c`
 
 - [ ] **Phase 4: RAG Pipeline Engine**
   - Gemini client wrapper (`gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-embedding-2`)
