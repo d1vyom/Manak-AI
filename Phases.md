@@ -26,12 +26,15 @@
   - *Status*: Completed & Verified (Python syntax checks pass, seed dataset validated, Next.js build clean)
   - *Git Commit*: `d2586e7`
 
-- [ ] **Phase 3: Database & Hybrid Vector Search**
-  - Supabase PostgreSQL schema migration (HNSW vector index + GIN tsvector)
-  - Hybrid search RPC function (`hybrid_search`) with Reciprocal Rank Fusion (RRF)
-  - Database access layer (`src/lib/db/prisma.ts`, `src/lib/db/queries.ts`)
-  - In-memory vector fallback for offline execution & testing
-  - *Git Commit*: Pending
+- [x] **Phase 3: Database & Hybrid Vector Search**
+  - Supabase PostgreSQL project provisioned (`manak-ai` in `ap-south-1`) via Supabase MCP
+  - Extensions enabled: `vector` (pgvector) and `pg_trgm`
+  - Database schema, HNSW index, and tsvector GIN index applied
+  - Hybrid search RPC function (`hybrid_search`) with Reciprocal Rank Fusion (RRF k=60) created
+  - Seed dataset loaded into Supabase tables (`documents`, `document_chunks`, `qcos`)
+  - TypeScript query access layer (`src/lib/db/queries.ts`) with live Supabase & in-memory fallback
+  - API endpoints `/api/standards` and `/api/search` implemented
+  - *Status*: Completed & Verified (Live Supabase queries tested, keyword search validated, Next.js build clean)
 
 - [ ] **Phase 4: RAG Pipeline Engine**
   - Gemini client wrapper (`gemini-2.5-flash`, `gemini-2.5-flash-lite`, `gemini-embedding-2`)

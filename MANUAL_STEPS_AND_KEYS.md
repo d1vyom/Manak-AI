@@ -8,11 +8,11 @@ This document tracks all external API keys, service credentials, and manual step
 
 | Service | Variable Name | Purpose | How to Obtain | Status |
 |---|---|---|---|---|
-| **Google Gemini API** | `GEMINI_API_KEY` | LLM generation (`gemini-2.5-flash`), query understanding (`gemini-2.5-flash-lite`), and embeddings (`gemini-embedding-2`) | Free at [Google AI Studio](https://aistudio.google.com). No billing required. | ⏳ Required for live LLM |
-| **Supabase URL** | `SUPABASE_URL` | Supabase project endpoint | [Supabase Dashboard](https://supabase.com) > Project Settings > API | ⏳ Required for live DB |
-| **Supabase Anon Key** | `SUPABASE_ANON_KEY` | Public client API key | [Supabase Dashboard](https://supabase.com) > Project Settings > API | ⏳ Required for live DB |
-| **Database URL** | `DATABASE_URL` | Transaction pooled Postgres URL (port 6543) | [Supabase Dashboard](https://supabase.com) > Project Settings > Database | ⏳ Required for live DB |
-| **Direct DB URL** | `DIRECT_URL` | Direct Postgres connection (port 5432) for Prisma migrations | [Supabase Dashboard](https://supabase.com) > Project Settings > Database | ⏳ Required for live DB |
+| **Google Gemini API** | `GEMINI_API_KEY` | LLM generation (`gemini-2.5-flash`), query understanding (`gemini-2.5-flash-lite`), and embeddings (`gemini-embedding-2`) | Added by user to `.env` | ✅ Configured |
+| **Supabase URL** | `SUPABASE_URL` | Supabase project endpoint (`manak-ai`) | Auto-provisioned via Supabase MCP | ✅ Live (`ap-south-1`) |
+| **Supabase Anon Key** | `SUPABASE_ANON_KEY` | Public client API key | Auto-provisioned via Supabase MCP | ✅ Configured |
+| **Database URL** | `DATABASE_URL` | Transaction pooled Postgres URL (port 6543) | Auto-provisioned via Supabase MCP | ✅ Database active |
+| **Direct DB URL** | `DIRECT_URL` | Direct Postgres connection (port 5432) for Prisma migrations | Auto-provisioned via Supabase MCP | ✅ Database active |
 
 ---
 
