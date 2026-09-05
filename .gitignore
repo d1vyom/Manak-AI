@@ -43,3 +43,7 @@ venv/
 .venv/
 env/
 .env
+
+# Playwright MCP artifacts
+.playwright-mcp/
+

@@ -83,7 +83,40 @@
     @apply border-border;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-foreground antialiased selection:bg-saffron-500/20 selection:text-saffron-700;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
+}
+
+/* Custom subtle scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(140, 150, 170, 0.3);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(140, 150, 170, 0.5);
+}
+
+/* Citation highlight animation */
+@keyframes citation-pulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(242, 140, 40, 0.7);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(242, 140, 40, 0.25);
+    transform: scale(1.02);
+  }
+}
+
+.citation-highlight {
+  animation: citation-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  border-color: #F28C28 !important;
 }

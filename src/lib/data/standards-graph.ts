@@ -195,6 +195,13 @@ export const STANDARDS_KNOWLEDGE_GRAPH: Record<string, RelatedStandard[]> = {
 };
 
 /**
+ * Retrieves related companion standards for a single standard number.
+ */
+export function getRelatedStandards(standard: string): RelatedStandard[] {
+  return getRelatedStandardsForList([standard]);
+}
+
+/**
  * Retrieves related standards for a given standard or list of standards.
  */
 export function getRelatedStandardsForList(standards: string[]): RelatedStandard[] {

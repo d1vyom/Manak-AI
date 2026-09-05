@@ -1,3 +1,6 @@
+// src/app/page.tsx
+"use client";
+
 import Link from "next/link";
 import {
   Shield,
@@ -5,14 +8,20 @@ import {
   FileCheck2,
   GitFork,
   ArrowRight,
-  CheckCircle2,
   Sparkles,
   Award,
   Globe2,
   FileText,
+  CheckCircle2,
+  ShieldCheck,
+  CheckSquare,
 } from "lucide-react";
+import { useAppStore } from "@/lib/store/app-store";
+import { t } from "@/lib/utils/i18n";
 
 export default function HomePage() {
+  const { language } = useAppStore();
+
   const exampleQueries = [
     {
       title: "Manufacturer Query",
@@ -76,29 +85,65 @@ export default function HomePage() {
             </div>
 
             <h1 className="mt-6 text-4xl font-extrabold tracking-tight sm:text-6xl sm:leading-none">
-              AI-Powered <span className="text-saffron-400">BIS Compliance</span> Intelligence
+              {language === "hi" ? (
+                <>
+                  एआई-संचालित <span className="text-saffron-400">BIS अनुपालन</span> इंटेलिजेंस
+                </>
+              ) : (
+                <>
+                  AI-Powered <span className="text-saffron-400">BIS Compliance</span> Intelligence
+                </>
+              )}
             </h1>
 
-            <p className="mt-6 text-lg text-navy-100 sm:text-xl">
-              Instant regulatory clarity for Indian manufacturers and consumers. Discover applicable Indian Standards (IS),
-              mandatory QCO gazettes, clause-level requirements, and certification pathways in English & Hindi.
+            <p className="mt-6 text-base sm:text-lg text-navy-100 leading-relaxed max-w-2xl mx-auto">
+              {language === "hi"
+                ? "भारतीय निर्माताओं और उपभोक्ताओं के लिए तत्काल नियामक स्पष्टता। भारतीय मानक (IS), अनिवार्य QCO अधिसूचनाएं, खंड-स्तरीय परीक्षण सीमाएं और ISI प्रमाणन मार्ग तुरंत खोजें।"
+                : "Instant regulatory clarity for Indian manufacturers and consumers. Discover applicable Indian Standards (IS), mandatory QCO gazettes, clause-level requirements, and certification pathways in English & Hindi."}
             </p>
 
-            <div className="mt-10 flex flex-col sm:flex-row items-center justify-center gap-4">
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-3.5">
               <Link
                 href="/chat"
-                className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg bg-saffron-500 px-7 py-3.5 text-base font-bold text-white shadow-lg shadow-saffron-500/25 transition-all hover:bg-saffron-600 hover:shadow-saffron-500/40"
+                className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl bg-saffron-500 px-7 py-3.5 text-sm font-bold text-white shadow-lg shadow-saffron-500/25 transition-all hover:bg-saffron-600 hover:shadow-saffron-500/40"
               >
-                <span>Launch AI Assistant</span>
+                <span>{language === "hi" ? "एआई सहायक शुरू करें" : "Launch AI Assistant"}</span>
                 <ArrowRight className="h-4 w-4" />
               </Link>
               <Link
                 href="/explore"
-                className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/10 px-7 py-3.5 text-base font-semibold text-white backdrop-blur transition-all hover:bg-white/20"
+                className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all hover:bg-white/20"
               >
-                <FileText className="h-4 w-4" />
-                <span>Explore Standards</span>
+                <FileText className="h-4 w-4 text-saffron-400" />
+                <span>{language === "hi" ? "मानक खोजें" : "Explore Standards"}</span>
               </Link>
+              <Link
+                href="/compliance"
+                className="flex w-full sm:w-auto items-center justify-center gap-2 rounded-xl border border-white/20 bg-white/10 px-6 py-3.5 text-sm font-semibold text-white backdrop-blur transition-all hover:bg-white/20"
+              >
+                <CheckSquare className="h-4 w-4 text-emerald-400" />
+                <span>{language === "hi" ? "गैप ऑडिट चलाएं" : "Run Gap Audit"}</span>
+              </Link>
+            </div>
+
+            {/* Quick Stats Banner */}
+            <div className="mt-12 grid grid-cols-2 gap-4 sm:grid-cols-4 border-t border-white/10 pt-8 text-left">
+              <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
+                <div className="text-2xl font-extrabold text-saffron-400">19,000+</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">Indian Standards Indexed</div>
+              </div>
+              <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
+                <div className="text-2xl font-extrabold text-emerald-400">100%</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">Clause-Level Citations</div>
+              </div>
+              <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
+                <div className="text-2xl font-extrabold text-white">QCO Track</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">Gazette Mandates Linked</div>
+              </div>
+              <div className="rounded-xl bg-white/5 p-3.5 backdrop-blur-sm border border-white/5">
+                <div className="text-2xl font-extrabold text-saffron-300">Bilingual</div>
+                <div className="text-[11px] text-navy-200 mt-0.5">Hindi & English Grounding</div>
+              </div>
             </div>
           </div>
         </div>
@@ -188,18 +233,30 @@ export default function HomePage() {
         <div className="container mx-auto max-w-7xl px-4 sm:px-6">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 rounded-2xl border border-navy-700 bg-navy-800/60 p-8">
             <div>
-              <h3 className="text-xl font-bold">Ready to check your product compliance?</h3>
+              <div className="flex items-center gap-2 text-xs font-bold text-saffron-400 mb-2">
+                <ShieldCheck className="h-4 w-4" />
+                <span>Section 17 BIS Act Compliance</span>
+              </div>
+              <h3 className="text-xl font-bold">Ready to verify your product compliance?</h3>
               <p className="mt-1 text-sm text-navy-200">
-                Test your product against Bureau of Indian Standards in seconds with full citation backing.
+                Audit your bill of materials and testing protocols against official Bureau of Indian Standards clauses in seconds.
               </p>
             </div>
-            <Link
-              href="/chat"
-              className="inline-flex items-center gap-2 rounded-lg bg-saffron-500 px-6 py-3 text-sm font-bold text-white shadow hover:bg-saffron-600 transition-colors shrink-0"
-            >
-              <span>Get Started</span>
-              <ArrowRight className="h-4 w-4" />
-            </Link>
+            <div className="flex items-center gap-3 shrink-0">
+              <Link
+                href="/compliance"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white hover:bg-white/20 transition-colors"
+              >
+                <span>Run Gap Audit</span>
+              </Link>
+              <Link
+                href="/chat"
+                className="inline-flex items-center gap-2 rounded-lg bg-saffron-500 px-6 py-3 text-sm font-bold text-white shadow hover:bg-saffron-600 transition-colors"
+              >
+                <span>Launch Assistant</span>
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           </div>
         </div>
       </section>
