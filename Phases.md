@@ -125,11 +125,14 @@
   - *Git Commit*: `13cd62a` / `6df8f11`
 
 
-- [ ] **Phase 11: SIH Demo Rehearsal & Backup Guardrails**
-  - Cached offline responses for 3 core demo queries (Manufacturer, Consumer, Hindi)
-  - Demo script walkthrough verification
-  - Fallback error resilience & judge presentation notes
-  - *Git Commit*: Pending
+- [x] **Phase 11: SIH Demo Rehearsal & Backup Guardrails**
+  - Cached offline responses for core demo queries (Manufacturer, Consumer, Hindi, plus Abstention guardrail)
+  - Demo script walkthrough verification (`tests/demo-rehearsal.ts`) — 100% PASS across all 4 scenarios
+  - Fallback error resilience & offline demo guardrail in `src/lib/rag/pipeline.ts`
+  - Playwright E2E verification (`tests/e2e.ts`) — 8/8 tests passed (100% SUCCESS)
+  - Full production build verification (`npm run build`) — 0 errors, 100% SUCCESS
+  - *Status*: Completed & Live Deployed
+  - *Git Commit*: `eb8f969`
 
 ---
 

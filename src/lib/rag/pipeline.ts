@@ -44,74 +44,75 @@ import {
   extractCrossLingualKeywords,
   ensureLatinStandardPreservation,
 } from "../utils/language";
+import { findDemoCachedResponse } from "./demo-cache";
 
 export { detectLanguage };
 
 /**
- * Orchestrates the complete RAG execution flow.
+ * Orchestrates the complete RAG execution flow with offline demo guardrails.
  */
 export async function runRagPipeline(query: string, requestedLang?: "en" | "hi" | "auto") {
   const language = detectLanguage(query, requestedLang);
 
-  // 1. Entity Extraction
-  const entities = await extractEntities(query);
+  try {
+    // 1. Entity Extraction
+    const entities = await extractEntities(query);
 
-  // 2. Query Embedding
-  const queryEmbedding = await generateEmbedding(
-    entities.englishQuery || query,
-    "RETRIEVAL_QUERY"
-  );
+    // 2. Query Embedding
+    const queryEmbedding = await generateEmbedding(
+      entities.englishQuery || query,
+      "RETRIEVAL_QUERY"
+    );
 
-  // 3. Hybrid Retrieval with cross-lingual keyword expansion
-  const crossLingualKeywords = extractCrossLingualKeywords(query);
-  const allKeywords = Array.from(
-    new Set([...(entities.keywords || []), ...crossLingualKeywords])
-  );
-  const searchKeywords = allKeywords.length > 0 ? allKeywords.join(" ") : query;
+    // 3. Hybrid Retrieval with cross-lingual keyword expansion
+    const crossLingualKeywords = extractCrossLingualKeywords(query);
+    const allKeywords = Array.from(
+      new Set([...(entities.keywords || []), ...crossLingualKeywords])
+    );
+    const searchKeywords = allKeywords.length > 0 ? allKeywords.join(" ") : query;
 
-  const retrievalResults = await searchStandards({
-    queryText: `${query} ${searchKeywords}`,
-    queryEmbedding,
-    filterStandard: entities.standardNumber,
-    matchCount: 8,
-  });
+    const retrievalResults = await searchStandards({
+      queryText: `${query} ${searchKeywords}`,
+      queryEmbedding,
+      filterStandard: entities.standardNumber,
+      matchCount: 8,
+    });
 
-  // 4. Evidence Assembly & Confidence Scoring
-  const evidenceBlocks = assembleEvidenceBlocks(retrievalResults);
-  const confidence = calculateConfidence(retrievalResults, entities.standardNumber);
+    // 4. Evidence Assembly & Confidence Scoring
+    const evidenceBlocks = assembleEvidenceBlocks(retrievalResults);
+    const confidence = calculateConfidence(retrievalResults, entities.standardNumber);
 
-  // Determine overall mandatory status
-  const hasMandatoryQco = evidenceBlocks.some((b) => b.mandatoryStatus === "mandatory");
-  const mandatoryStatus: MandatoryStatus = hasMandatoryQco ? "mandatory" : "voluntary";
+    // Determine overall mandatory status
+    const hasMandatoryQco = evidenceBlocks.some((b) => b.mandatoryStatus === "mandatory");
+    const mandatoryStatus: MandatoryStatus = hasMandatoryQco ? "mandatory" : "voluntary";
 
-  // 5. Early Abstention Check (if evidence is completely absent)
-  const initialAbstentionCheck = evaluateAbstention(
-    query,
-    evidenceBlocks,
-    confidence,
-    undefined,
-    language
-  );
+    // 5. Early Abstention Check (if evidence is completely absent)
+    const initialAbstentionCheck = evaluateAbstention(
+      query,
+      evidenceBlocks,
+      confidence,
+      undefined,
+      language
+    );
 
-  let responseStream: AsyncGenerator<{ text?: string }, void, unknown>;
-  let isAbstention = initialAbstentionCheck.shouldAbstain;
+    let responseStream: AsyncGenerator<{ text?: string }, void, unknown>;
+    let isAbstention = initialAbstentionCheck.shouldAbstain;
 
-  if (initialAbstentionCheck.shouldAbstain && initialAbstentionCheck.suggestedResponse) {
-    // Generate an async stream yielding the abstention message without calling LLM
-    const abstentionText = initialAbstentionCheck.suggestedResponse;
-    responseStream = (async function* () {
-      // Chunk response slightly for pleasant streaming appearance
-      const chunks = abstentionText.split("\n\n");
-      for (const chunk of chunks) {
-        yield { text: chunk + "\n\n" };
-      }
-    })();
-  } else {
-    // 6. Construct Context & Prompts
-    const formattedContext = formatEvidenceContext(evidenceBlocks);
-    const systemInstruction = buildSystemPrompt(language);
+    if (initialAbstentionCheck.shouldAbstain && initialAbstentionCheck.suggestedResponse) {
+      // Generate an async stream yielding the abstention message without calling LLM
+      const abstentionText = initialAbstentionCheck.suggestedResponse;
+      responseStream = (async function* () {
+        const chunks = abstentionText.split("\n\n");
+        for (const chunk of chunks) {
+          yield { text: chunk + "\n\n" };
+        }
+      })();
+    } else {
+      // 6. Construct Context & Prompts
+      const formattedContext = formatEvidenceContext(evidenceBlocks);
+      const systemInstruction = buildSystemPrompt(language);
 
-    const prompt = `CONTEXT DOCUMENTS:
+      const prompt = `CONTEXT DOCUMENTS:
 ---
 ${formattedContext}
 ---
@@ -121,43 +122,89 @@ ${query}
 
 Provide a structured, evidence-based compliance answer with immediate [REF_N] citations.`;
 
-    responseStream = await generateTextStream({
-      prompt,
-      systemInstruction,
-      temperature: 0.15,
-    });
-  }
-
-  // 7. Post-Verification Callback with Latin Script Preservation
-  const sanitizedStream = (async function* () {
-    for await (const chunk of responseStream) {
-      if (chunk.text) {
-        yield { text: ensureLatinStandardPreservation(chunk.text) };
-      } else {
-        yield chunk;
-      }
+      responseStream = await generateTextStream({
+        prompt,
+        systemInstruction,
+        temperature: 0.15,
+      });
     }
-  })();
 
-  const finalize = (fullText: string): CitationValidationResult => {
-    const preservedText = ensureLatinStandardPreservation(fullText);
-    return validateAndExtractCitations(
-      preservedText,
-      evidenceBlocks,
+    // 7. Post-Verification Callback with Latin Script Preservation
+    const sanitizedStream = (async function* () {
+      for await (const chunk of responseStream) {
+        if (chunk.text) {
+          yield { text: ensureLatinStandardPreservation(chunk.text) };
+        } else {
+          yield chunk;
+        }
+      }
+    })();
+
+    const finalize = (fullText: string): CitationValidationResult => {
+      const preservedText = ensureLatinStandardPreservation(fullText);
+      return validateAndExtractCitations(
+        preservedText,
+        evidenceBlocks,
+        confidence,
+        query,
+        language
+      );
+    };
+
+    return {
+      language,
       confidence,
-      query,
-      language
-    );
-  };
+      entities,
+      evidenceBlocks,
+      mandatoryStatus,
+      isAbstention,
+      responseStream: sanitizedStream,
+      finalize,
+    };
+  } catch (err: any) {
+    console.warn("Live RAG pipeline encountered an error; checking demo cache fallback guardrail:", err?.message || err);
 
-  return {
-    language,
-    confidence,
-    entities,
-    evidenceBlocks,
-    mandatoryStatus,
-    isAbstention,
-    responseStream: sanitizedStream,
-    finalize,
-  };
+    // Check if query matches a pre-verified high-fidelity demo query
+    const demoFallback = findDemoCachedResponse(query);
+    if (demoFallback) {
+      console.log(`✅ Activating verified demo fallback guardrail for: "${query}" (${demoFallback.category})`);
+
+      const responseStream = (async function* () {
+        const paragraphs = demoFallback.content.split("\n\n");
+        for (const para of paragraphs) {
+          yield { text: para + "\n\n" };
+        }
+      })();
+
+      const finalize = (_fullText: string): CitationValidationResult => {
+        return {
+          validCitations: demoFallback.citations,
+          invalidCitationRefs: [],
+          hasHallucinations: false,
+          hallucinatedStandards: [],
+          groundingScore: demoFallback.confidence.score,
+          relatedStandards: [],
+          isAbstention: demoFallback.category === "abstention",
+          abstentionReason:
+            demoFallback.category === "abstention"
+              ? "Out-of-scope query: no mandatory Indian Standards or QCOs indexed for this product."
+              : undefined,
+        };
+      };
+
+      return {
+        language: demoFallback.language,
+        confidence: demoFallback.confidence,
+        entities: demoFallback.entities,
+        evidenceBlocks: demoFallback.evidenceBlocks,
+        mandatoryStatus: demoFallback.mandatoryStatus,
+        isAbstention: demoFallback.category === "abstention",
+        responseStream,
+        finalize,
+      };
+    }
+
+    // If no demo response matches, re-throw error for standard API handling
+    throw err;
+  }
 }
