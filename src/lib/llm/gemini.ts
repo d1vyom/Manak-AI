@@ -20,6 +20,33 @@ export const GEMINI_MODELS = {
   EMBEDDING: "gemini-embedding-2",
 };
 
+async function withRetry<T>(fn: () => Promise<T>, maxRetries = 3, initialDelayMs = 3000): Promise<T> {
+  let lastError: any;
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err: any) {
+      lastError = err;
+      const isRateLimit =
+        err?.status === 429 ||
+        err?.code === 429 ||
+        String(err?.message || "").includes("429") ||
+        String(err?.message || "").includes("RESOURCE_EXHAUSTED");
+
+      if (isRateLimit && attempt < maxRetries - 1) {
+        const delay = initialDelayMs * Math.pow(2, attempt) + Math.random() * 500;
+        console.warn(
+          `[Gemini API] Rate limit (429) hit. Retrying attempt ${attempt + 1}/${maxRetries} after ${Math.round(delay)}ms...`
+        );
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        continue;
+      }
+      throw err;
+    }
+  }
+  throw lastError;
+}
+
 export interface GenerateTextOptions {
   prompt: string;
   systemInstruction?: string;
@@ -34,17 +61,19 @@ export async function generateText(options: GenerateTextOptions): Promise<string
   const { prompt, systemInstruction, temperature = 0.2, maxOutputTokens = 2048 } = options;
   const client = getGeminiClient();
 
-  const response = await client.models.generateContent({
-    model: GEMINI_MODELS.MAIN,
-    contents: prompt,
-    config: {
-      systemInstruction: systemInstruction || undefined,
-      temperature,
-      maxOutputTokens,
-    },
-  });
+  return await withRetry(async () => {
+    const response = await client.models.generateContent({
+      model: GEMINI_MODELS.MAIN,
+      contents: prompt,
+      config: {
+        systemInstruction: systemInstruction || undefined,
+        temperature,
+        maxOutputTokens,
+      },
+    });
 
-  return response.text || "";
+    return response.text || "";
+  });
 }
 
 /**
@@ -54,14 +83,16 @@ export async function generateTextStream(options: GenerateTextOptions) {
   const { prompt, systemInstruction, temperature = 0.2, maxOutputTokens = 2048 } = options;
   const client = getGeminiClient();
 
-  return await client.models.generateContentStream({
-    model: GEMINI_MODELS.MAIN,
-    contents: prompt,
-    config: {
-      systemInstruction: systemInstruction || undefined,
-      temperature,
-      maxOutputTokens,
-    },
+  return await withRetry(async () => {
+    return await client.models.generateContentStream({
+      model: GEMINI_MODELS.MAIN,
+      contents: prompt,
+      config: {
+        systemInstruction: systemInstruction || undefined,
+        temperature,
+        maxOutputTokens,
+      },
+    });
   });
 }
 
@@ -102,13 +133,15 @@ export async function generateEmbedding(
 
   try {
     const client = getGeminiClient();
-    const response = await client.models.embedContent({
-      model: GEMINI_MODELS.EMBEDDING,
-      contents: text,
-      config: {
-        outputDimensionality: 768,
-      },
-    });
+    const response = await withRetry(async () => {
+      return await client.models.embedContent({
+        model: GEMINI_MODELS.EMBEDDING,
+        contents: text,
+        config: {
+          outputDimensionality: 768,
+        },
+      });
+    }, 2, 2000);
 
     if (response.embeddings && response.embeddings.length > 0 && response.embeddings[0].values) {
       return response.embeddings[0].values;

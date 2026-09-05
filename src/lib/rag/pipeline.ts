@@ -5,8 +5,9 @@ import { searchStandards } from "../db/queries";
 import { assembleEvidenceBlocks, formatEvidenceContext } from "./evidence";
 import { calculateConfidence } from "./confidence";
 import { validateAndExtractCitations } from "./citations";
+import { evaluateAbstention } from "./abstention";
 import { ExtractedEntities, ConfidenceResult, EvidenceBlock, MandatoryStatus } from "@/types/rag";
-import { Citation } from "@/types/citations";
+import { Citation, CitationValidationResult } from "@/types/citations";
 
 export interface RagPipelineResult {
   language: "en" | "hi";
@@ -14,8 +15,9 @@ export interface RagPipelineResult {
   entities: ExtractedEntities;
   evidenceBlocks: EvidenceBlock[];
   mandatoryStatus: MandatoryStatus;
+  isAbstention: boolean;
   responseStream: AsyncGenerator<{ text?: string }, void, unknown>;
-  finalize: (fullText: string) => { citations: Citation[]; hasHallucinations: boolean };
+  finalize: (fullText: string) => CitationValidationResult;
 }
 
 /**
@@ -83,11 +85,34 @@ export async function runRagPipeline(query: string, requestedLang?: "en" | "hi" 
   const hasMandatoryQco = evidenceBlocks.some((b) => b.mandatoryStatus === "mandatory");
   const mandatoryStatus: MandatoryStatus = hasMandatoryQco ? "mandatory" : "voluntary";
 
-  // 5. Construct Context & Prompts
-  const formattedContext = formatEvidenceContext(evidenceBlocks);
-  const systemInstruction = buildSystemPrompt(language);
+  // 5. Early Abstention Check (if evidence is completely absent)
+  const initialAbstentionCheck = evaluateAbstention(
+    query,
+    evidenceBlocks,
+    confidence,
+    undefined,
+    language
+  );
 
-  const prompt = `CONTEXT DOCUMENTS:
+  let responseStream: AsyncGenerator<{ text?: string }, void, unknown>;
+  let isAbstention = initialAbstentionCheck.shouldAbstain;
+
+  if (initialAbstentionCheck.shouldAbstain && initialAbstentionCheck.suggestedResponse) {
+    // Generate an async stream yielding the abstention message without calling LLM
+    const abstentionText = initialAbstentionCheck.suggestedResponse;
+    responseStream = (async function* () {
+      // Chunk response slightly for pleasant streaming appearance
+      const chunks = abstentionText.split("\n\n");
+      for (const chunk of chunks) {
+        yield { text: chunk + "\n\n" };
+      }
+    })();
+  } else {
+    // 6. Construct Context & Prompts
+    const formattedContext = formatEvidenceContext(evidenceBlocks);
+    const systemInstruction = buildSystemPrompt(language);
+
+    const prompt = `CONTEXT DOCUMENTS:
 ---
 ${formattedContext}
 ---
@@ -97,21 +122,22 @@ ${query}
 
 Provide a structured, evidence-based compliance answer with immediate [REF_N] citations.`;
 
-  // 6. Initiate Generation Stream
-  const responseStream = await generateTextStream({
-    prompt,
-    systemInstruction,
-    temperature: 0.15,
-  });
+    responseStream = await generateTextStream({
+      prompt,
+      systemInstruction,
+      temperature: 0.15,
+    });
+  }
 
   // 7. Post-Verification Callback
-  const finalize = (fullText: string) => {
-    const validation = validateAndExtractCitations(fullText, evidenceBlocks);
-    return {
-      citations: validation.validCitations,
-      hasHallucinations: validation.hasHallucinations,
-      relatedStandards: validation.relatedStandards,
-    };
+  const finalize = (fullText: string): CitationValidationResult => {
+    return validateAndExtractCitations(
+      fullText,
+      evidenceBlocks,
+      confidence,
+      query,
+      language
+    );
   };
 
   return {
@@ -120,6 +146,7 @@ Provide a structured, evidence-based compliance answer with immediate [REF_N] ci
     entities,
     evidenceBlocks,
     mandatoryStatus,
+    isAbstention,
     responseStream,
     finalize,
   };

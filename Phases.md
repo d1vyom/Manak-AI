@@ -47,11 +47,14 @@
   - *Status*: Completed & Verified (Live RAG pipeline test passed, 0 hallucinations detected, Next.js build clean)
   - *Git Commit*: `c8e7ec2`
 
-- [ ] **Phase 5: Citation Engine & Verification**
-  - Strict citation regex parsing and reference map builder
-  - Anti-hallucination verification (cross-checking claims against source text)
-  - Related standards suggestion algorithm
-  - Refusal & abstention response when evidence is insufficient
+- [x] **Phase 5: Citation Engine & Verification**
+  - Strict citation regex parsing and multi-bracket normalization (`src/lib/rag/verification.ts`)
+  - Authentic verbatim quote extraction from source evidence chunks for frontend citation cards
+  - Anti-hallucination verification (checking ref IDs, authentic standard numbers, and calculating grounding score)
+  - Indian Standards cross-reference relationship knowledge graph (`src/lib/data/standards-graph.ts`)
+  - Out-of-scope abstention guardrail with official BIS portal guidance (`src/lib/rag/abstention.ts`)
+  - Robust exponential backoff retry for Gemini API rate limits (`src/lib/llm/gemini.ts`)
+  - *Status*: Completed & Verified (14/14 unit tests passed, 4/4 live pipeline compliance & abstention tests passed)
   - *Git Commit*: Pending
 
 - [ ] **Phase 6: Compliance Pathway & Gap Analysis**

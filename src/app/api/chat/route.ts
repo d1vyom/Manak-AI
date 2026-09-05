@@ -20,6 +20,7 @@ export async function POST(req: NextRequest) {
       entities,
       evidenceBlocks,
       mandatoryStatus,
+      isAbstention,
       responseStream,
       finalize,
     } = await runRagPipeline(query, requestedLang);
@@ -40,6 +41,7 @@ export async function POST(req: NextRequest) {
             entities,
             retrievedDocuments: evidenceBlocks.length,
             mandatoryStatus,
+            isAbstention,
           },
         };
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(metadataPayload)}\n\n`));
@@ -62,13 +64,18 @@ export async function POST(req: NextRequest) {
           console.error("Error during content generation streaming:", streamError);
         }
 
-        // 3. Extract and send validated citations
+        // 3. Extract and send validated citations with rich verification metadata
         const finalResult = finalize(fullGeneratedText);
         const citationsPayload = {
           type: "citations",
-          data: finalResult.citations,
+          data: finalResult.validCitations,
           hasHallucinations: finalResult.hasHallucinations,
+          hallucinatedStandards: finalResult.hallucinatedStandards,
+          invalidCitationRefs: finalResult.invalidCitationRefs,
+          groundingScore: finalResult.groundingScore,
           relatedStandards: finalResult.relatedStandards,
+          isAbstention: finalResult.isAbstention,
+          abstentionReason: finalResult.abstentionReason,
         };
         controller.enqueue(encoder.encode(`data: ${JSON.stringify(citationsPayload)}\n\n`));
 

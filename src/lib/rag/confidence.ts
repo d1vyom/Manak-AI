@@ -19,15 +19,25 @@ export function calculateConfidence(results: RetrievalResult[], requestedStandar
     };
   }
 
-  const topSim = results[0]?.similarity ?? 0.6;
+  const topSim = results[0]?.similarity ?? 0.0;
   const inBothCount = results.filter((r) => r.inVectorResults && r.inKeywordResults).length;
-  const hybridConsensus = inBothCount / results.length;
+  const inKeywordCount = results.filter((r) => r.inKeywordResults).length;
+  const hybridConsensus = inBothCount / Math.max(1, results.length);
 
-  const metadataMatch = requestedStandard
-    ? results.some((r) => r.standardNumber.toLowerCase().includes(requestedStandard.toLowerCase()))
+  let metadataMatch = 0.0;
+  if (requestedStandard) {
+    metadataMatch = results.some((r) => r.standardNumber.toLowerCase().includes(requestedStandard.toLowerCase()))
       ? 1.0
-      : 0.0
-    : 0.8; // neutral when no specific standard was requested in query
+      : 0.0;
+  } else {
+    // If no specific standard was requested, verify if any keywords matched Indian Standards
+    if (inKeywordCount > 0 || hybridConsensus > 0) {
+      metadataMatch = 0.8;
+    } else {
+      // Completely unrelated query with 0 keyword hits in standards
+      metadataMatch = 0.0;
+    }
+  }
 
   const topScore = results[0]?.rrfScore ?? 0.016;
   const fifthScore = results[Math.min(4, results.length - 1)]?.rrfScore ?? 0.012;
