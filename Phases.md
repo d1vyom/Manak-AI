@@ -55,7 +55,7 @@
   - Out-of-scope abstention guardrail with official BIS portal guidance (`src/lib/rag/abstention.ts`)
   - Robust exponential backoff retry for Gemini API rate limits (`src/lib/llm/gemini.ts`)
   - *Status*: Completed & Verified (14/14 unit tests passed, 4/4 live pipeline compliance & abstention tests passed)
-  - *Git Commit*: Pending
+  - *Git Commit*: `8e66348`
 
 - [ ] **Phase 6: Compliance Pathway & Gap Analysis**
   - Structured 7-step certification pathway builder (`POST /api/compliance/pathway`)
