@@ -45,6 +45,7 @@
   - End-to-end RAG orchestrator (`src/lib/rag/pipeline.ts`) with anti-hallucination prompts
   - Server-Sent Events (SSE) streaming API route (`POST /api/chat`)
   - *Status*: Completed & Verified (Live RAG pipeline test passed, 0 hallucinations detected, Next.js build clean)
+  - *Git Commit*: `c8e7ec2`
 
 - [ ] **Phase 5: Citation Engine & Verification**
   - Strict citation regex parsing and reference map builder
