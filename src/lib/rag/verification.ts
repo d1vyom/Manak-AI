@@ -3,6 +3,7 @@ import { EvidenceBlock } from "@/types/rag";
 import { Citation, RelatedStandard } from "@/types/citations";
 import { SEED_DOCUMENTS } from "@/lib/data/seed-data";
 import { STANDARDS_KNOWLEDGE_GRAPH, getRelatedStandardsForList } from "@/lib/data/standards-graph";
+import { cleanFormulaText, cleanQuoteText } from "@/lib/utils/format";
 
 export interface VerificationDetails {
   validCitations: Citation[];
@@ -15,23 +16,27 @@ export interface VerificationDetails {
 
 /**
  * Extracts a verbatim or high-relevance quote from the evidence block that aligns
- * with the sentence citing that reference.
+ * with the sentence citing that reference, automatically sanitizing markdown tables and hyphens.
  */
 function extractMatchingQuote(
   evidenceContent: string,
   citingSentence: string
 ): string {
-  // Split evidence into sentences
-  const sentences = evidenceContent
-    .split(/(?<=[.?!])\s+/)
-    .map((s) => s.trim())
-    .filter((s) => s.length > 20);
+  // First, clean formulas and LaTeX symbols
+  const sanitizedContent = cleanFormulaText(evidenceContent);
 
-  if (sentences.length === 0) {
-    return evidenceContent.slice(0, 200).trim() + "...";
+  // Split evidence into candidate segments (sentences or clean table rows)
+  const segments = sanitizedContent
+    .split(/(?:(?<=[.?!])\s+|\r?\n)/)
+    .map((s) => s.trim())
+    // Exclude empty lines and table divider lines like |---|---|---|
+    .filter((s) => s.length > 10 && !/^\|?\s*[-:]+[-| :]+\|?$/.test(s));
+
+  if (segments.length === 0) {
+    return cleanQuoteText(sanitizedContent.slice(0, 250).trim() + "...");
   }
 
-  // Tokenize citing sentence to find the sentence with highest token overlap
+  // Tokenize citing sentence to find the segment with highest token overlap
   const citingTokens = new Set(
     citingSentence
       .toLowerCase()
@@ -40,36 +45,34 @@ function extractMatchingQuote(
       .filter((w) => w.length >= 3 || /\d/.test(w))
   );
 
-  if (citingTokens.size === 0) {
-    return sentences[0];
-  }
-
-  let bestSentence = sentences[0];
+  let bestSegment = segments[0];
   let maxScore = -1;
 
-  for (const sentence of sentences) {
-    const sTokens = sentence
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, " ")
-      .split(/\s+/)
-      .filter((w) => w.length >= 3 || /\d/.test(w));
+  if (citingTokens.size > 0) {
+    for (const seg of segments) {
+      const sTokens = seg
+        .toLowerCase()
+        .replace(/[^a-z0-9\s]/g, " ")
+        .split(/\s+/)
+        .filter((w) => w.length >= 3 || /\d/.test(w));
 
-    let matchScore = 0;
-    for (const t of sTokens) {
-      if (citingTokens.has(t)) {
-        // Boost numbers and domain terms like 304, 500, qco, mandatory
-        const isIdentifier = /\d/.test(t) || t.length > 5;
-        matchScore += isIdentifier ? 2 : 1;
+      let matchScore = 0;
+      for (const t of sTokens) {
+        if (citingTokens.has(t)) {
+          const isIdentifier = /\d/.test(t) || t.length > 5;
+          matchScore += isIdentifier ? 2 : 1;
+        }
       }
-    }
 
-    if (matchScore > maxScore) {
-      maxScore = matchScore;
-      bestSentence = sentence;
+      if (matchScore > maxScore) {
+        maxScore = matchScore;
+        bestSegment = seg;
+      }
     }
   }
 
-  return bestSentence;
+  // Format table rows or strip lingering markdown pipes
+  return cleanQuoteText(bestSegment);
 }
 
 /**

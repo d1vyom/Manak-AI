@@ -2,10 +2,11 @@
 "use client";
 
 import { useState } from "react";
-import { ExternalLink, Copy, Check, BookOpen, Quote, ShieldAlert, ShieldCheck } from "lucide-react";
+import { ExternalLink, Copy, Check, BookOpen, Quote, ShieldAlert, ShieldCheck, FileText } from "lucide-react";
 import { Citation } from "@/types/citations";
 import { useAppStore } from "@/lib/store/app-store";
 import { t } from "@/lib/utils/i18n";
+import { cleanQuoteText, formatRefNumber } from "@/lib/utils/format";
 
 interface CitationCardProps {
   citation: Citation;
@@ -16,10 +17,12 @@ export function CitationCard({ citation }: CitationCardProps) {
   const [copied, setCopied] = useState(false);
 
   const isHighlighted = highlightedCitationId === citation.refId;
+  const numOnly = formatRefNumber(citation.refId);
+  const formattedQuote = cleanQuoteText(citation.quote || "");
 
   const handleCopyQuote = () => {
-    const textToCopy = citation.quote
-      ? `"${citation.quote}" — ${citation.standardNumber}, ${citation.clauseNumber}`
+    const textToCopy = formattedQuote
+      ? `"${formattedQuote}" — ${citation.standardNumber}, ${citation.clauseNumber}`
       : `${citation.standardNumber}, ${citation.clauseNumber} (${citation.documentTitle})`;
     navigator.clipboard.writeText(textToCopy);
     setCopied(true);
@@ -39,8 +42,9 @@ export function CitationCard({ citation }: CitationCardProps) {
       {/* Header: Ref pill + Standard Number + Mandatory Tag */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-navy-800 text-xs font-mono font-bold text-white shadow-sm dark:bg-navy-700">
-            {citation.refId}
+          <span className="inline-flex h-6 shrink-0 items-center gap-1 rounded-md bg-navy-800 px-2 text-[11px] font-semibold text-white shadow-xs dark:bg-navy-700">
+            <FileText className="h-3 w-3 text-saffron-400 shrink-0" />
+            <span>Source {numOnly}</span>
           </span>
           <div>
             <h4 className="font-mono text-sm font-bold text-navy-900 group-hover:text-saffron-600 dark:text-white dark:group-hover:text-saffron-400">
@@ -81,10 +85,10 @@ export function CitationCard({ citation }: CitationCardProps) {
       </div>
 
       {/* Verbatim Quote Excerpt */}
-      {citation.quote && (
+      {formattedQuote && (
         <div className="relative mt-3 rounded-lg border-l-2 border-saffron-500 bg-slate-50/90 p-3 text-xs italic leading-relaxed text-navy-900 dark:bg-navy-950/50 dark:text-navy-100">
           <Quote className="absolute -top-1 -left-1 h-3.5 w-3.5 text-saffron-500/40" />
-          <p className="line-clamp-4 pl-2">&ldquo;{citation.quote}&rdquo;</p>
+          <p className="line-clamp-4 pl-2">&ldquo;{formattedQuote}&rdquo;</p>
         </div>
       )}
 

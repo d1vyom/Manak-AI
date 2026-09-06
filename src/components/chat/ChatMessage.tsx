@@ -4,9 +4,10 @@
 import React, { useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
-import { Shield, Sparkles, User, Copy, Check, FileText, ExternalLink } from "lucide-react";
+import { Shield, User, Copy, Check, FileText } from "lucide-react";
 import { ChatMessage as ChatMessageType, useAppStore } from "@/lib/store/app-store";
 import { t } from "@/lib/utils/i18n";
+import { cleanFormulaText } from "@/lib/utils/format";
 import { ConfidenceBadge } from "./ConfidenceBadge";
 import { MandatoryBadge } from "./MandatoryBadge";
 import { CitationBadge } from "./CitationBadge";
@@ -54,15 +55,16 @@ export function ChatMessage({ message }: ChatMessageProps) {
   }
 
   // Pre-process text to replace citation references [1], [2], [REF_1], [REF_1, REF_2] with an interactive CitationBadge
-  const renderTextWithCitations = (text: string) => {
+  const renderTextWithCitations = (text: string): React.ReactNode => {
+    const cleanedText = cleanFormulaText(text);
     const parts: (string | React.ReactNode)[] = [];
     const regex = /\[((?:(?:REF_)?\d+(?:[,\s]+)?)+)\]/gi;
     let lastIndex = 0;
     let match;
 
-    while ((match = regex.exec(text)) !== null) {
+    while ((match = regex.exec(cleanedText)) !== null) {
       if (match.index > lastIndex) {
-        parts.push(text.substring(lastIndex, match.index));
+        parts.push(cleanedText.substring(lastIndex, match.index));
       }
       const rawRefs = match[1].split(/[,\s]+/).map((s) => s.trim()).filter(Boolean);
       rawRefs.forEach((rawRef, nIdx) => {
@@ -86,12 +88,31 @@ export function ChatMessage({ message }: ChatMessageProps) {
       lastIndex = regex.lastIndex;
     }
 
-    if (lastIndex < text.length) {
-      parts.push(text.substring(lastIndex));
+    if (lastIndex < cleanedText.length) {
+      parts.push(cleanedText.substring(lastIndex));
     }
 
-    return parts.length > 0 ? parts : text;
+    return parts.length > 0 ? parts : cleanedText;
   };
+
+  // Recursively process children elements to inject interactive CitationBadge on all text nodes
+  const renderNodeWithCitations = (children: React.ReactNode): React.ReactNode => {
+    return React.Children.map(children, (child) => {
+      if (typeof child === "string") {
+        return renderTextWithCitations(child);
+      }
+      if (React.isValidElement<{ children?: React.ReactNode }>(child) && child.props && child.props.children) {
+        return React.cloneElement(
+          child,
+          undefined,
+          renderNodeWithCitations(child.props.children)
+        );
+      }
+      return child;
+    });
+  };
+
+  const sanitizedContent = cleanFormulaText(message.content);
 
   return (
     <div className="flex gap-3 my-5">
@@ -137,62 +158,57 @@ export function ChatMessage({ message }: ChatMessageProps) {
               p: ({ children }) => {
                 return (
                   <p className="leading-relaxed text-navy-900 dark:text-navy-100 mb-2.5">
-                    {React.Children.map(children, (child) => {
-                      if (typeof child === "string") {
-                        return renderTextWithCitations(child);
-                      }
-                      return child;
-                    })}
+                    {renderNodeWithCitations(children)}
                   </p>
                 );
               },
               li: ({ children }) => {
                 return (
-                  <li className="text-navy-900 dark:text-navy-100">
-                    {React.Children.map(children, (child) => {
-                      if (typeof child === "string") {
-                        return renderTextWithCitations(child);
-                      }
-                      return child;
-                    })}
+                  <li className="text-navy-900 dark:text-navy-100 my-0.5">
+                    {renderNodeWithCitations(children)}
                   </li>
                 );
               },
               h1: ({ children }) => (
                 <h1 className="text-lg font-bold text-navy-900 dark:text-white mt-4 mb-2">
-                  {children}
+                  {renderNodeWithCitations(children)}
                 </h1>
               ),
               h2: ({ children }) => (
                 <h2 className="text-base font-bold text-navy-900 dark:text-white mt-3 mb-1.5">
-                  {children}
+                  {renderNodeWithCitations(children)}
                 </h2>
               ),
               h3: ({ children }) => (
                 <h3 className="text-sm font-bold text-navy-900 dark:text-white mt-2.5 mb-1">
-                  {children}
+                  {renderNodeWithCitations(children)}
                 </h3>
               ),
+              blockquote: ({ children }) => (
+                <blockquote className="my-3 rounded-r-lg border-l-3 border-saffron-500 bg-slate-50/80 p-3 text-xs italic text-navy-900 dark:bg-navy-950/60 dark:text-navy-100">
+                  {renderNodeWithCitations(children)}
+                </blockquote>
+              ),
               table: ({ children }) => (
-                <div className="my-3 overflow-x-auto rounded-lg border border-border">
+                <div className="my-3.5 overflow-x-auto rounded-xl border border-navy-200/80 bg-white shadow-2xs dark:border-navy-800 dark:bg-navy-950/60">
                   <table className="min-w-full divide-y divide-border text-xs">
                     {children}
                   </table>
                 </div>
               ),
               th: ({ children }) => (
-                <th className="bg-navy-50/80 px-3 py-2 text-left font-bold text-navy-900 dark:bg-navy-900 dark:text-white">
-                  {children}
+                <th className="bg-navy-50/90 px-3.5 py-2.5 text-left font-bold text-navy-900 dark:bg-navy-900/90 dark:text-white border-b border-border/80">
+                  {renderNodeWithCitations(children)}
                 </th>
               ),
               td: ({ children }) => (
-                <td className="px-3 py-2 text-navy-800 dark:text-navy-200">
-                  {children}
+                <td className="px-3.5 py-2 text-navy-800 dark:text-navy-200 border-b border-border/40">
+                  {renderNodeWithCitations(children)}
                 </td>
               ),
             }}
           >
-            {message.content}
+            {sanitizedContent}
           </ReactMarkdown>
         </div>
 

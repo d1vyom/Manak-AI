@@ -101,24 +101,39 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
                   {t("panelRelatedStandardsDesc", language)}
                 </p>
 
-                <div className="mt-2.5 space-y-2">
+                <div className="mt-3 space-y-2.5">
                   {uniqueRelated.map((rel, idx) => (
-                    <div
+                    <a
                       key={idx}
-                      className="flex items-center justify-between rounded-lg border border-slate-100 bg-slate-50/70 p-2 text-xs dark:border-navy-800/80 dark:bg-navy-950/40"
+                      href={`/explore?q=${encodeURIComponent(rel.standardNumber)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block rounded-lg border border-slate-200/80 bg-slate-50/70 p-2.5 text-xs transition-all hover:border-saffron-400 hover:bg-saffron-50/20 hover:shadow-xs dark:border-navy-800 dark:bg-navy-950/50 dark:hover:border-saffron-600"
                     >
-                      <div className="flex flex-col">
-                        <span className="font-mono font-bold text-[11px] text-navy-900 dark:text-white">
-                          {rel.standardNumber}
-                        </span>
-                        <span className="text-[10px] text-muted-foreground line-clamp-1">
-                          {rel.title}
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-1 min-w-0">
+                          <span className="font-mono font-bold text-[12px] text-navy-900 group-hover:text-saffron-600 dark:text-white dark:group-hover:text-saffron-400">
+                            {rel.standardNumber}
+                          </span>
+                          <ExternalLink className="h-2.5 w-2.5 text-muted-foreground opacity-60 group-hover:opacity-100 transition-opacity shrink-0" />
+                        </div>
+                        <span
+                          className={`shrink-0 rounded px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide ${
+                            rel.mandatoryStatus === "mandatory"
+                              ? "bg-emerald-100 text-emerald-800 dark:bg-emerald-950/70 dark:text-emerald-300"
+                              : "bg-navy-100 text-navy-700 dark:bg-navy-800 dark:text-navy-300"
+                          }`}
+                        >
+                          {rel.mandatoryStatus === "mandatory" ? "Mandatory QCO" : "Companion"}
                         </span>
                       </div>
-                      <span className="shrink-0 rounded bg-navy-100 px-1.5 py-0.5 text-[9px] font-semibold uppercase text-navy-700 dark:bg-navy-800 dark:text-navy-300">
-                        {rel.relationship.replace("_", " ")}
-                      </span>
-                    </div>
+                      <p className="mt-1 text-[11px] font-medium text-navy-800 line-clamp-2 leading-snug dark:text-navy-200">
+                        {rel.title}
+                      </p>
+                      <p className="mt-1 text-[10px] text-muted-foreground leading-normal break-words">
+                        {rel.relationship.replace(/_/g, " ")}
+                      </p>
+                    </a>
                   ))}
                 </div>
               </div>

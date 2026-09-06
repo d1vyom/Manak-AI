@@ -35,6 +35,7 @@ STRICT COMPLIANCE & CITATION RULES:
 5. Mandatory Status: Clearly indicate whether the standard is MANDATORY under an active Quality Control Order (QCO) or VOLUNTARY.
 6. Language: Respond in ${language === "hi" ? "Hindi (हिन्दी)" : "English"}.
 7. Standard Number Identification & Preservation: ALWAYS explicitly state the applicable Indian Standard designation (e.g. "IS 14543:2016", "IS 2347:2017") in Latin script in your answer. Never translate standard numbers into Devanagari (write "IS 14543", not "आई एस").
+8. No LaTeX / Dollar Signs: Do NOT use LaTeX math syntax or enclose chemical formulas or units in dollar signs (e.g. write "CaCO3", "Cl", "Fluoride", "mg/l" directly in plain text, NEVER "$CaCO_3$" or "$Cl$").
 
 Tone: Authoritative, objective, structured, professional government/regulatory style.`;
 }
@@ -44,6 +45,7 @@ import {
   extractCrossLingualKeywords,
   ensureLatinStandardPreservation,
 } from "../utils/language";
+import { cleanFormulaText } from "../utils/format";
 import { findDemoCachedResponse } from "./demo-cache";
 
 export { detectLanguage };
@@ -129,11 +131,11 @@ Provide a structured, evidence-based compliance answer with immediate [REF_N] ci
       });
     }
 
-    // 7. Post-Verification Callback with Latin Script Preservation
+    // 7. Post-Verification Callback with Latin Script Preservation & Clean Formatting
     const sanitizedStream = (async function* () {
       for await (const chunk of responseStream) {
         if (chunk.text) {
-          yield { text: ensureLatinStandardPreservation(chunk.text) };
+          yield { text: cleanFormulaText(ensureLatinStandardPreservation(chunk.text)) };
         } else {
           yield chunk;
         }
@@ -141,7 +143,7 @@ Provide a structured, evidence-based compliance answer with immediate [REF_N] ci
     })();
 
     const finalize = (fullText: string): CitationValidationResult => {
-      const preservedText = ensureLatinStandardPreservation(fullText);
+      const preservedText = cleanFormulaText(ensureLatinStandardPreservation(fullText));
       return validateAndExtractCitations(
         preservedText,
         evidenceBlocks,

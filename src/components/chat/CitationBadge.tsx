@@ -61,20 +61,21 @@ export function CitationBadge({ refId, citation, allMessageCitations }: Citation
     <button
       type="button"
       onClick={handleClick}
+      aria-label={`Source citation ${numOnly}`}
       title={
         resolvedCitation
-          ? `Source: ${resolvedCitation.standardNumber} — ${resolvedCitation.clauseTitle || resolvedCitation.documentTitle}`
-          : `Source Citation [${numOnly}]`
+          ? `Source ${numOnly}: ${resolvedCitation.standardNumber} (${resolvedCitation.clauseTitle || resolvedCitation.documentTitle}) — Click to view authentic clause`
+          : `Source ${numOnly} — Click to view verified standard clause`
       }
-      className={`inline-flex items-center justify-center font-mono font-bold text-[11px] align-super mx-0.5 px-1.5 py-0.5 rounded cursor-pointer transition-all duration-200 ${
+      className={`inline-flex items-center justify-center align-super mx-0.5 h-4 min-w-[17px] px-1 rounded-full font-sans font-bold text-[10px] tracking-tight cursor-pointer transition-all duration-200 shadow-2xs ${
         isHighlighted
-          ? "bg-saffron-500 text-white shadow-md scale-110 ring-2 ring-saffron-400"
+          ? "bg-saffron-500 text-white shadow-sm scale-110 ring-2 ring-saffron-300 dark:ring-saffron-600"
           : isMandatory
-          ? "bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-200 dark:bg-emerald-950/60 dark:text-emerald-300 dark:border-emerald-700"
-          : "bg-navy-100 text-navy-800 border border-navy-300 hover:bg-navy-200 dark:bg-navy-800 dark:text-navy-200 dark:border-navy-600"
+          ? "bg-emerald-100 text-emerald-800 border border-emerald-300 hover:bg-emerald-600 hover:text-white hover:border-emerald-600 dark:bg-emerald-950/70 dark:text-emerald-300 dark:border-emerald-700 dark:hover:bg-emerald-600 dark:hover:text-white"
+          : "bg-navy-100 text-navy-800 border border-navy-300 hover:bg-navy-800 hover:text-white hover:border-navy-800 dark:bg-navy-800 dark:text-navy-200 dark:border-navy-700 dark:hover:bg-navy-700 dark:hover:text-white"
       }`}
     >
-      [{numOnly}]
+      {numOnly}
     </button>
   );
 }
