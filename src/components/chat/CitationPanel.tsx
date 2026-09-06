@@ -55,7 +55,7 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
 
         <div className="flex items-center gap-2">
           {activeCitations.length > 0 && (
-            <span className="inline-flex items-center rounded-full bg-saffron-100 px-2 py-0.5 text-xs font-bold text-saffron-800 dark:bg-saffron-950/80 dark:text-saffron-300">
+            <span className="inline-flex items-center rounded-full border border-amber-200/80 bg-amber-50 px-2 py-0.5 text-xs font-bold text-amber-900 shadow-2xs dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
               {activeCitations.length} {activeCitations.length === 1 ? t("panelSourceCount", language) : t("panelSourcesCount", language)}
             </span>
           )}

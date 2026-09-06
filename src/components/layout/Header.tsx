@@ -64,7 +64,7 @@ export function Header() {
                   {language === "hi" ? " AI" : "AI"}
                 </span>
               </span>
-              <span className="inline-flex items-center rounded-full bg-saffron-100 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-saffron-800 dark:bg-saffron-900/40 dark:text-saffron-300">
+              <span className="inline-flex items-center rounded-full border border-amber-200/80 bg-amber-50 px-1.5 sm:px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-amber-900 shadow-2xs dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
                 SIH 2026
               </span>
             </div>
