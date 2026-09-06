@@ -23,6 +23,11 @@ interface AppState {
   language: "en" | "hi";
   setLanguage: (lang: "en" | "hi") => void;
 
+  // Theme State (Dark / Light Mode)
+  theme: "light" | "dark";
+  setTheme: (theme: "light" | "dark") => void;
+  toggleTheme: () => void;
+
   // Chat State
   messages: ChatMessage[];
   setMessages: (messages: ChatMessage[] | ((prev: ChatMessage[]) => ChatMessage[])) => void;
@@ -54,6 +59,33 @@ export const useAppStore = create<AppState>()(
     (set) => ({
       language: "en",
       setLanguage: (lang) => set({ language: lang }),
+
+      theme: "light",
+      setTheme: (theme) => {
+        if (typeof window !== "undefined") {
+          localStorage.setItem("manak-theme", theme);
+          if (theme === "dark") {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        }
+        set({ theme });
+      },
+      toggleTheme: () => {
+        set((state) => {
+          const nextTheme = state.theme === "dark" ? "light" : "dark";
+          if (typeof window !== "undefined") {
+            localStorage.setItem("manak-theme", nextTheme);
+            if (nextTheme === "dark") {
+              document.documentElement.classList.add("dark");
+            } else {
+              document.documentElement.classList.remove("dark");
+            }
+          }
+          return { theme: nextTheme };
+        });
+      },
 
       messages: [],
       setMessages: (messages) =>
@@ -104,7 +136,20 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: "manak-ai-app-storage",
-      partialize: (state) => ({ language: state.language }),
+      partialize: (state) => ({ language: state.language, theme: state.theme }),
+      onRehydrateStorage: () => (state) => {
+        if (state && typeof window !== "undefined") {
+          const storedTheme = localStorage.getItem("manak-theme") || state.theme;
+          const isDark =
+            storedTheme === "dark" ||
+            (!storedTheme && window.matchMedia("(prefers-color-scheme: dark)").matches);
+          if (isDark) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        }
+      },
     }
   )
 );

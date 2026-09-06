@@ -11,6 +11,8 @@ export interface Dictionary {
   navPathway: string;
   navAudit: string;
   langToggle: string;
+  themeToggleDark: string;
+  themeToggleLight: string;
 
   // Hero & Capabilities
   heroBadge: string;
@@ -220,6 +222,8 @@ export const UI_STRINGS: Record<SupportedLanguage, Dictionary> = {
     navPathway: "Certification Pathway",
     navAudit: "Gap Analysis",
     langToggle: "हिन्दी",
+    themeToggleDark: "Switch to Dark Mode",
+    themeToggleLight: "Switch to Light Mode",
 
     // Hero & Capabilities
     heroBadge: "Smart India Hackathon 2026 — Problem Statement SIH26107",
@@ -442,6 +446,8 @@ export const UI_STRINGS: Record<SupportedLanguage, Dictionary> = {
     navPathway: "प्रमाणन मार्ग",
     navAudit: "अंतर विश्लेषण",
     langToggle: "English",
+    themeToggleDark: "डार्क मोड चालू करें",
+    themeToggleLight: "लाइट मोड चालू करें",
 
     // Hero & Capabilities
     heroBadge: "स्मार्ट इंडिया हैकाथॉन 2026 — समस्या कथन SIH26107",

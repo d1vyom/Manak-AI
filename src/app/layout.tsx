@@ -34,8 +34,27 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full scroll-smooth overflow-x-hidden">
-      <body className={`${inter.className} flex min-h-full flex-col bg-slate-50/50 text-slate-900 antialiased overflow-x-hidden w-full max-w-full`}>
+    <html lang="en" className="h-full scroll-smooth overflow-x-hidden" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var localTheme = localStorage.getItem('manak-theme');
+                var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                if (localTheme === 'dark' || (!localTheme && prefersDark)) {
+                  document.documentElement.classList.add('dark');
+                } else {
+                  document.documentElement.classList.remove('dark');
+                }
+              } catch (e) {}
+            `,
+          }}
+        />
+      </head>
+      <body
+        className={`${inter.className} flex min-h-full flex-col bg-slate-50/50 text-slate-900 antialiased overflow-x-hidden w-full max-w-full dark:bg-navy-950 dark:text-slate-100 transition-colors duration-200`}
+      >
         <Header />
         <main className="flex-1 w-full max-w-full overflow-x-hidden">{children}</main>
         <Footer />
