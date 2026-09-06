@@ -53,10 +53,10 @@ export function ChatMessage({ message }: ChatMessageProps) {
     );
   }
 
-  // Pre-process text to replace citation references [1], [2] with a placeholder token that we render
+  // Pre-process text to replace citation references [1], [2], [REF_1], [REF_1, REF_2] with an interactive CitationBadge
   const renderTextWithCitations = (text: string) => {
     const parts: (string | React.ReactNode)[] = [];
-    const regex = /\[(\d+(?:,\s*\d+)*)\]/g;
+    const regex = /\[((?:(?:REF_)?\d+(?:[,\s]+)?)+)\]/gi;
     let lastIndex = 0;
     let match;
 
@@ -64,13 +64,22 @@ export function ChatMessage({ message }: ChatMessageProps) {
       if (match.index > lastIndex) {
         parts.push(text.substring(lastIndex, match.index));
       }
-      const numbers = match[1].split(",").map((s) => s.trim());
-      numbers.forEach((num, nIdx) => {
+      const rawRefs = match[1].split(/[,\s]+/).map((s) => s.trim()).filter(Boolean);
+      rawRefs.forEach((rawRef, nIdx) => {
+        const normRef = rawRef.toUpperCase();
+        const numOnly = normRef.replace(/^REF_/, "");
+        const matchedCitation = message.citations?.find((c) => {
+          const cRef = c.refId.toUpperCase().trim();
+          const cNum = cRef.replace(/^REF_/, "");
+          return cRef === normRef || cNum === numOnly;
+        });
+
         parts.push(
           <CitationBadge
             key={`${match!.index}-${nIdx}`}
-            refId={num}
-            citation={message.citations?.find((c) => c.refId === num)}
+            refId={numOnly}
+            citation={matchedCitation}
+            allMessageCitations={message.citations}
           />
         );
       });

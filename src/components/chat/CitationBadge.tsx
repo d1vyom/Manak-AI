@@ -7,26 +7,52 @@ import { Citation } from "@/types/citations";
 interface CitationBadgeProps {
   refId: string;
   citation?: Citation;
+  allMessageCitations?: Citation[];
 }
 
-export function CitationBadge({ refId, citation }: CitationBadgeProps) {
-  const { highlightedCitationId, setHighlightedCitationId, setIsDrawerOpen, activeCitations } =
-    useAppStore();
+export function CitationBadge({ refId, citation, allMessageCitations }: CitationBadgeProps) {
+  const {
+    highlightedCitationId,
+    setHighlightedCitationId,
+    setIsDrawerOpen,
+    activeCitations,
+    setActiveCitations,
+  } = useAppStore();
 
-  const isHighlighted = highlightedCitationId === refId;
-  const resolvedCitation = citation || activeCitations.find((c) => c.refId === refId);
+  const numOnly = refId.toUpperCase().replace(/^REF_/, "");
+  const resolvedCitation =
+    citation ||
+    activeCitations.find((c) => {
+      const cNum = c.refId.toUpperCase().replace(/^REF_/, "");
+      return cNum === numOnly;
+    });
+
+  const cardRefId = resolvedCitation?.refId || (refId.toUpperCase().startsWith("REF_") ? refId.toUpperCase() : `REF_${refId}`);
+  const isHighlighted =
+    highlightedCitationId === refId ||
+    highlightedCitationId === numOnly ||
+    highlightedCitationId === cardRefId;
 
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setHighlightedCitationId(refId);
+
+    if (allMessageCitations && allMessageCitations.length > 0) {
+      setActiveCitations(allMessageCitations);
+    }
+    setHighlightedCitationId(cardRefId);
     setIsDrawerOpen(true);
 
-    // Smooth scroll in citation drawer if present
-    const cardEl = document.getElementById(`citation-card-${refId}`);
-    if (cardEl) {
-      cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
+    // Smooth scroll in citation drawer
+    setTimeout(() => {
+      const cardEl =
+        document.getElementById(`citation-card-${cardRefId}`) ||
+        document.getElementById(`citation-card-${numOnly}`) ||
+        document.getElementById(`citation-card-${refId}`);
+      if (cardEl) {
+        cardEl.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 100);
   };
 
   const isMandatory = resolvedCitation?.mandatoryStatus === "mandatory";
@@ -38,7 +64,7 @@ export function CitationBadge({ refId, citation }: CitationBadgeProps) {
       title={
         resolvedCitation
           ? `Source: ${resolvedCitation.standardNumber} — ${resolvedCitation.clauseTitle || resolvedCitation.documentTitle}`
-          : `Source Citation [${refId}]`
+          : `Source Citation [${numOnly}]`
       }
       className={`inline-flex items-center justify-center font-mono font-bold text-[11px] align-super mx-0.5 px-1.5 py-0.5 rounded cursor-pointer transition-all duration-200 ${
         isHighlighted
@@ -48,7 +74,7 @@ export function CitationBadge({ refId, citation }: CitationBadgeProps) {
           : "bg-navy-100 text-navy-800 border border-navy-300 hover:bg-navy-200 dark:bg-navy-800 dark:text-navy-200 dark:border-navy-600"
       }`}
     >
-      [{refId}]
+      [{numOnly}]
     </button>
   );
 }

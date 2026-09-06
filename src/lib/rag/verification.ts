@@ -76,7 +76,9 @@ function extractMatchingQuote(
  * Scans text to find Indian Standard numbers (e.g. "IS 14543", "IS 9873 (Part 1)", "IS 456").
  */
 export function extractStandardNumbers(text: string): string[] {
-  const isRegex = /\bIS\s+(\d+(?:\s*\([Pp]art\s+\d+\))?)(?::\d{4})?\b/gi;
+  // Matches Indian Standard identifiers like "IS 14543", "IS 9873 (Part 1)", "IS 456:2000"
+  // Does not match lowercase English word "is" or decimals like "is 0.01"
+  const isRegex = /\bIS\s+([1-9]\d*(?:\s*\([Pp]art\s+\d+\))?)(?::\d{4})?(?!\.?\d)/g;
   const matches = text.match(isRegex) || [];
   const normalized = matches.map((m) => {
     // Strip year revision like :2016 for comparison
