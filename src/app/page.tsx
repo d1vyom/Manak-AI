@@ -169,7 +169,7 @@ export default function HomePage() {
               <Link
                 key={idx}
                 href={`/chat?q=${encodeURIComponent(q.text)}`}
-                className="group flex flex-col justify-between rounded-xl border border-navy-100 bg-slate-50/70 p-5 transition-all hover:border-saffron-300 hover:bg-white hover:shadow-md dark:border-navy-800 dark:bg-navy-900/50 dark:hover:border-saffron-500/40"
+                className="group flex flex-col justify-between rounded-xl border border-navy-100 bg-slate-50/70 p-5 transition-all hover:border-saffron-300 hover:bg-white hover:shadow-md dark:border-navy-800 dark:bg-navy-900/50 dark:hover:border-saffron-500/40 dark:hover:bg-navy-900"
               >
                 <div>
                   <span className="inline-block rounded-md bg-navy-100 px-2.5 py-0.5 text-[11px] font-semibold text-navy-800 dark:bg-navy-800 dark:text-navy-200">

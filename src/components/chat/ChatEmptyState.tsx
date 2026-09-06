@@ -73,7 +73,7 @@ export function ChatEmptyState({ onSelectPrompt }: ChatEmptyStateProps) {
               key={idx}
               type="button"
               onClick={() => onSelectPrompt(item.prompt)}
-              className="group flex flex-col justify-between rounded-xl border border-navy-200/80 bg-white p-4 text-left shadow-sm transition-all hover:border-saffron-400 hover:bg-saffron-50/20 hover:shadow-md dark:border-navy-800 dark:bg-navy-900/60 dark:hover:border-saffron-500/40"
+              className="group flex flex-col justify-between rounded-xl border border-navy-200/80 bg-white p-4 text-left shadow-sm transition-all hover:border-saffron-400 hover:bg-saffron-50/20 hover:shadow-md dark:border-navy-800 dark:bg-navy-900/60 dark:hover:border-saffron-500/40 dark:hover:bg-navy-900"
             >
               <div>
                 <div className="flex items-center justify-between">
