@@ -5,24 +5,19 @@
   "installCommand": "npm install",
   "functions": {
     "src/app/api/chat/route.ts": {
-      "maxDuration": 60,
-      "memory": 1024
+      "maxDuration": 60
     },
     "src/app/api/compliance/gap-analysis/route.ts": {
-      "maxDuration": 60,
-      "memory": 1024
+      "maxDuration": 60
     },
     "src/app/api/compliance/pathway/route.ts": {
-      "maxDuration": 30,
-      "memory": 1024
+      "maxDuration": 30
     },
     "src/app/api/standards/route.ts": {
-      "maxDuration": 30,
-      "memory": 1024
+      "maxDuration": 30
     },
     "src/app/api/search/route.ts": {
-      "maxDuration": 30,
-      "memory": 1024
+      "maxDuration": 30
     }
   },
   "headers": [
