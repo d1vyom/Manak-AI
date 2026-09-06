@@ -213,7 +213,7 @@ function ComplianceAuditContainer() {
               <h1 className="text-xl font-extrabold tracking-tight text-navy-900 dark:text-white sm:text-2xl">
                 {t("complianceTitle", language)}
               </h1>
-              <span className="rounded-full bg-saffron-100 px-2.5 py-0.5 text-xs font-bold text-saffron-800 dark:bg-saffron-950 dark:text-saffron-300">
+              <span className="inline-flex items-center rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-900 shadow-2xs dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
                 {t("isiReadinessBadge", language)}
               </span>
             </div>
@@ -377,7 +377,7 @@ function ComplianceAuditContainer() {
                       key={idx}
                       className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-xs cursor-pointer transition-colors ${
                         selectedTests.includes(test)
-                          ? "border-saffron-500 bg-saffron-50/40 text-navy-900 font-semibold dark:bg-saffron-950/20 dark:text-white"
+                          ? "border-saffron-500 bg-saffron-50/40 text-navy-900 font-semibold dark:bg-saffron-950/40 dark:text-white"
                           : "border-navy-100 bg-slate-50/70 text-navy-800 hover:bg-slate-100 dark:border-navy-800 dark:bg-navy-950/40 dark:text-navy-200"
                       }`}
                     >
@@ -410,7 +410,7 @@ function ComplianceAuditContainer() {
                       key={idx}
                       className={`flex items-center gap-2.5 rounded-xl border p-2.5 text-xs cursor-pointer transition-colors ${
                         selectedCerts.includes(cert)
-                          ? "border-saffron-500 bg-saffron-50/40 text-navy-900 font-semibold dark:bg-saffron-950/20 dark:text-white"
+                          ? "border-saffron-500 bg-saffron-50/40 text-navy-900 font-semibold dark:bg-saffron-950/40 dark:text-white"
                           : "border-navy-100 bg-slate-50/70 text-navy-800 hover:bg-slate-100 dark:border-navy-800 dark:bg-navy-950/40 dark:text-navy-200"
                       }`}
                     >

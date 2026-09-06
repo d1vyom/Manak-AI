@@ -128,7 +128,7 @@ export default function ExplorePage() {
               <h1 className="text-xl font-extrabold tracking-tight text-navy-900 dark:text-white sm:text-2xl">
                 {t("explorerTitle", language)}
               </h1>
-              <span className="rounded-full bg-saffron-100 px-2.5 py-0.5 text-xs font-bold text-saffron-800 dark:bg-saffron-950 dark:text-saffron-300">
+              <span className="inline-flex items-center rounded-full border border-amber-200/80 bg-amber-50 px-2.5 py-0.5 text-xs font-bold text-amber-900 shadow-2xs dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
                 {t("standardsIndexedBadge", language)}
               </span>
             </div>

@@ -267,7 +267,7 @@ function ChatContainer() {
                 <h1 className="text-sm font-bold text-navy-900 dark:text-white sm:text-base">
                   {t("chatAssistantTitle", language)}
                 </h1>
-                <span className="hidden sm:inline-flex rounded bg-saffron-100 px-2 py-0.5 text-[10px] font-bold text-saffron-800 dark:bg-saffron-950/80 dark:text-saffron-300">
+                <span className="hidden sm:inline-flex items-center rounded-full border border-amber-200/80 bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-900 shadow-2xs dark:border-amber-500/30 dark:bg-amber-500/15 dark:text-amber-300">
                   RAG Hybrid RRF
                 </span>
               </div>
