@@ -176,7 +176,11 @@ export function StandardDetailModal({ standard, onClose }: StandardDetailModalPr
         {/* Modal Action Footer */}
         <div className="flex flex-wrap items-center justify-between gap-3 border-t border-navy-100 bg-navy-50/50 p-4 dark:border-navy-800 dark:bg-navy-900/50">
           <a
-            href={standard.sourceUrl || "https://services.bis.gov.in"}
+            href={
+              standard.sourceUrl && !standard.sourceUrl.includes("services.bis.gov.in")
+                ? standard.sourceUrl
+                : "https://www.bis.gov.in/standards/?lang=en"
+            }
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-navy-900 dark:hover:text-white"

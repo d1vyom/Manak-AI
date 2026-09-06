@@ -40,6 +40,37 @@ export default function ExplorePage() {
       .finally(() => setLoading(false));
   }, []);
 
+  // Read URL query parameters (?q= or ?standard=) to auto-populate search and open modal
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const q = params.get("q") || params.get("standard");
+      if (q) {
+        setSearchQuery(q);
+      }
+    }
+  }, []);
+
+  // When standards load, auto-open standard detail modal if URL query matched a standard
+  useEffect(() => {
+    if (typeof window !== "undefined" && standards.length > 0) {
+      const params = new URLSearchParams(window.location.search);
+      const q = (params.get("q") || params.get("standard") || "").trim().toLowerCase();
+      if (q) {
+        const cleanQ = q.replace(/[^a-z0-9]/g, "");
+        const matched = standards.find((s) => {
+          const sNum = s.standardNumber.toLowerCase();
+          const sFull = s.fullDesignation.toLowerCase();
+          const cleanSNum = sNum.replace(/[^a-z0-9]/g, "");
+          return sNum.includes(q) || sFull.includes(q) || cleanSNum === cleanQ;
+        });
+        if (matched) {
+          setSelectedStandard(matched);
+        }
+      }
+    }
+  }, [standards]);
+
   // Filter standards
   const filteredStandards = standards.filter((std) => {
     const matchesSearch =

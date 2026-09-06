@@ -120,7 +120,7 @@ export async function performGapAnalysis(
         clauseNumber: "4.1",
         clauseTitle: "Material Requirements",
         pageNumber: 4,
-        sourceUrl: "https://services.bis.gov.in/IS14543",
+        sourceUrl: "/explore?q=IS%2014543",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         quote: "Stainless steel utensils including water bottles coming into direct contact with food or potable water shall be manufactured from austenitic stainless steel of Designation Grade 304 or Grade 316.",

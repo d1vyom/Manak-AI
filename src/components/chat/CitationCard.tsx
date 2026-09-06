@@ -110,7 +110,11 @@ export function CitationCard({ citation }: CitationCardProps) {
         </button>
 
         <a
-          href={citation.sourceUrl || "https://services.bis.gov.in"}
+          href={
+            citation.sourceUrl && !citation.sourceUrl.includes("services.bis.gov.in")
+              ? citation.sourceUrl
+              : `/explore?q=${encodeURIComponent(citation.standardNumber)}`
+          }
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center gap-1 font-semibold text-[11px] text-saffron-600 transition-colors hover:text-saffron-700 hover:underline dark:text-saffron-400"

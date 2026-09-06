@@ -135,7 +135,7 @@ export function CitationPanel({ className = "", onClose }: CitationPanelProps) {
             <span>{t("panelAntiHallucination", language)}</span>
           </span>
           <a
-            href="https://services.bis.gov.in"
+            href="https://www.bis.gov.in/standards/?lang=en"
             target="_blank"
             rel="noopener noreferrer"
             className="flex items-center gap-1 font-semibold text-navy-800 hover:text-saffron-600 dark:text-navy-200 dark:hover:text-saffron-400"

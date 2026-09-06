@@ -65,7 +65,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
           "This standard prescribes constructional, performance, and testing requirements for stainless steel vacuum flasks, bottles, and insulated beverage containers used for potable liquids.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "2",
@@ -79,7 +79,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
           "The inner container and any component in direct contact with potable liquid shall be manufactured from austenitic stainless steel conforming to Grade 304 or Grade 316 of IS 6911.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "3",
@@ -93,7 +93,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
           "Toxic element migration from inner surfaces shall not exceed permissible thresholds: Lead (Pb) <= 0.01 mg/kg, Cadmium (Cd) <= 0.005 mg/kg, and Chromium (Cr) <= 0.1 mg/kg when tested per IS 9845.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "4",
@@ -107,7 +107,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
           "Each container shall be indelibly marked with manufacturer identification, batch number, capacity, and the Standard Mark (ISI Mark) under Scheme-I of BIS (Conformity Assessment) Regulations, 2018.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
     ],
     citations: [
@@ -120,7 +120,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
         documentTitle: "Stainless Steel Vacuum Flasks and Insulated Containers",
         quote:
           "This standard prescribes constructional, performance, and testing requirements for stainless steel vacuum flasks, bottles, and insulated beverage containers used for potable liquids.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.95,
@@ -135,7 +135,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
         documentTitle: "Stainless Steel Vacuum Flasks and Insulated Containers",
         quote:
           "The inner container and any component in direct contact with potable liquid shall be manufactured from austenitic stainless steel conforming to Grade 304 or Grade 316 of IS 6911.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.93,
@@ -150,7 +150,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
         documentTitle: "Stainless Steel Vacuum Flasks and Insulated Containers",
         quote:
           "Toxic element migration from inner surfaces shall not exceed permissible thresholds: Lead (Pb) <= 0.01 mg/kg, Cadmium (Cd) <= 0.005 mg/kg, and Chromium (Cr) <= 0.1 mg/kg when tested per IS 9845.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.91,
@@ -165,7 +165,7 @@ export const DEMO_CACHE: DemoCachedResponse[] = [
         documentTitle: "Stainless Steel Vacuum Flasks and Insulated Containers",
         quote:
           "Each container shall be indelibly marked with manufacturer identification, batch number, capacity, and the Standard Mark (ISI Mark) under Scheme-I of BIS (Conformity Assessment) Regulations, 2018.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.89,
@@ -242,7 +242,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
           "This standard specifies safety, design, and performance criteria for domestic pressure cookers made from aluminium alloy or stainless steel with nominal operating capacities up to 10 litres.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "2",
@@ -256,7 +256,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
           "Every cooker shall be equipped with an independent safety relief valve and fusible safety plug that automatically releases excess pressure between 1.5 and 2.0 times operating pressure if the primary vent weight becomes obstructed.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "3",
@@ -270,7 +270,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
           "The cooker body and lid assembly shall safely withstand internal hydrostatic pressure of not less than three times (3x) the nominal working pressure (minimum 300 kPa) without catastrophic rupture or gasket blowout.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "4",
@@ -284,7 +284,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
           "Domestic pressure cookers must carry the official ISI Mark with standard code 'IS 2347' and a 7-digit CM/L license number verifiable via the BIS Care Mobile Application.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
     ],
     citations: [
@@ -297,7 +297,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
         documentTitle: "Domestic Pressure Cookers — Specification",
         quote:
           "This standard specifies safety, design, and performance criteria for domestic pressure cookers made from aluminium alloy or stainless steel with nominal operating capacities up to 10 litres.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.94,
@@ -312,7 +312,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
         documentTitle: "Domestic Pressure Cookers — Specification",
         quote:
           "Every cooker shall be equipped with an independent safety relief valve and fusible safety plug that automatically releases excess pressure between 1.5 and 2.0 times operating pressure if the primary vent weight becomes obstructed.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.92,
@@ -327,7 +327,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
         documentTitle: "Domestic Pressure Cookers — Specification",
         quote:
           "The cooker body and lid assembly shall safely withstand internal hydrostatic pressure of not less than three times (3x) the nominal working pressure (minimum 300 kPa) without catastrophic rupture or gasket blowout.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.89,
@@ -342,7 +342,7 @@ Each manufactured piece must be permanently embossed or laser-etched with the **
         documentTitle: "Domestic Pressure Cookers — Specification",
         quote:
           "Domestic pressure cookers must carry the official ISI Mark with standard code 'IS 2347' and a 7-digit CM/L license number verifiable via the BIS Care Mobile Application.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.87,
@@ -417,7 +417,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
           "This standard specifies requirements and test methods for toys intended for use by children under 14 years of age. It applies to all manufactured or imported toys in India.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "2",
@@ -431,7 +431,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
           "Toys for children under 36 months shall not fit entirely into the small parts cylinder (diameter 31.7 mm) to prevent ingestion and airway obstruction.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "3",
@@ -445,7 +445,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
           "Accessible edges and wire terminations shall not present sharp cutting hazards or puncture risks when tested under designated torque and tension loads.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
       {
         refId: "4",
@@ -459,7 +459,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
           "Under the Toys (Quality Control) Order, 2020, every toy manufactured in or imported into India must bear the ISI Standard Mark under Scheme-I certification.",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
       },
     ],
     citations: [
@@ -472,7 +472,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
         documentTitle: "Safety of Toys — Part 1: Mechanical and Physical Properties",
         quote:
           "This standard specifies requirements and test methods for toys intended for use by children under 14 years of age. It applies to all manufactured or imported toys in India.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.94,
@@ -487,7 +487,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
         documentTitle: "Safety of Toys — Part 1: Mechanical and Physical Properties",
         quote:
           "Toys for children under 36 months shall not fit entirely into the small parts cylinder (diameter 31.7 mm) to prevent ingestion and airway obstruction.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.92,
@@ -502,7 +502,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
         documentTitle: "Safety of Toys — Part 1: Mechanical and Physical Properties",
         quote:
           "Accessible edges and wire terminations shall not present sharp cutting hazards or puncture risks when tested under designated torque and tension loads.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.89,
@@ -517,7 +517,7 @@ Domestic pressure cookers sold in India are legally mandated to carry the **ISI 
         documentTitle: "Safety of Toys — Part 1: Mechanical and Physical Properties",
         quote:
           "Under the Toys (Quality Control) Order, 2020, every toy manufactured in or imported into India must bear the ISI Standard Mark under Scheme-I certification.",
-        sourceUrl: "https://services.bis.gov.in",
+        sourceUrl: "/explore",
         mandatoryStatus: "mandatory",
         chunkType: "clause",
         confidenceScore: 0.87,

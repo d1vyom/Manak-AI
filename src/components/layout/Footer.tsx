@@ -40,7 +40,7 @@ export function Footer() {
             </Link>
             <span>•</span>
             <Link
-              href="https://services.bis.gov.in"
+              href="https://www.bis.gov.in/standards/?lang=en"
               target="_blank"
               rel="noopener noreferrer"
               className="hover:text-navy-900 dark:hover:text-white flex items-center gap-1 transition-colors"
