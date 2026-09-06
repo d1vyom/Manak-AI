@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Shield, BookOpen, CheckSquare, MessageSquare, Globe, Menu, X, ArrowRight } from "lucide-react";
 import { useAppStore } from "@/lib/store/app-store";
 import { t } from "@/lib/utils/i18n";
+import { ThemeToggle } from "./ThemeToggle";
 
 export function Header() {
   const pathname = usePathname();
@@ -96,6 +97,9 @@ export function Header() {
 
           <div className="h-5 w-[1px] bg-border mx-1" />
 
+          {/* Theme Toggle */}
+          <ThemeToggle />
+
           {/* Language Toggle */}
           <button
             type="button"
@@ -108,8 +112,10 @@ export function Header() {
           </button>
         </nav>
 
-        {/* Mobile Actions: Language Toggle + Hamburger Button (Visible only on mobile) */}
-        <div className="flex md:hidden items-center gap-2">
+        {/* Mobile Actions: Theme Toggle + Language Toggle + Hamburger Button (Visible only on mobile) */}
+        <div className="flex md:hidden items-center gap-1.5">
+          <ThemeToggle />
+
           <button
             type="button"
             onClick={toggleLanguage}
@@ -190,6 +196,19 @@ export function Header() {
                   </Link>
                 );
               })}
+            </div>
+
+            {/* Mobile Menu Footer Action Row: Theme Toggle & Language Toggle */}
+            <div className="mt-3 flex items-center justify-between gap-2 border-t border-navy-100 pt-3 dark:border-navy-800">
+              <ThemeToggle showLabel className="flex-1 justify-center py-2.5" />
+              <button
+                type="button"
+                onClick={toggleLanguage}
+                className="flex flex-1 items-center justify-center gap-1.5 rounded-lg border border-navy-200 bg-white py-2.5 text-xs font-bold text-navy-800 shadow-2xs hover:bg-slate-50 dark:border-navy-700 dark:bg-navy-900 dark:text-navy-200"
+              >
+                <Globe className="h-4 w-4 text-saffron-500" />
+                <span>{language === "en" ? "भाषा: हिन्दी" : "Language: EN"}</span>
+              </button>
             </div>
           </div>
         </>
