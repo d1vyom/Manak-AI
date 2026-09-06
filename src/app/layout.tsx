@@ -1,10 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 
 const inter = Inter({ subsets: ["latin"] });
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+};
 
 export const metadata: Metadata = {
   title: "Manak AI — AI-Powered BIS Standards & Compliance Intelligence",
@@ -28,12 +34,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className="h-full scroll-smooth">
-      <body className={`${inter.className} flex min-h-full flex-col bg-slate-50/50 text-slate-900 antialiased`}>
+    <html lang="en" className="h-full scroll-smooth overflow-x-hidden">
+      <body className={`${inter.className} flex min-h-full flex-col bg-slate-50/50 text-slate-900 antialiased overflow-x-hidden w-full max-w-full`}>
         <Header />
-        <main className="flex-1">{children}</main>
+        <main className="flex-1 w-full max-w-full overflow-x-hidden">{children}</main>
         <Footer />
       </body>
     </html>
   );
 }
+

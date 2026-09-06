@@ -201,7 +201,7 @@ function ComplianceAuditContainer() {
   ];
 
   return (
-    <div className="container mx-auto max-w-7xl px-4 py-8 sm:px-6">
+    <div className="container mx-auto max-w-7xl px-3.5 py-6 sm:px-6 sm:py-8 w-full max-w-full overflow-x-hidden">
       {/* Header */}
       <div className="flex flex-col gap-4 border-b border-navy-100 pb-6 dark:border-navy-800 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
