@@ -65,12 +65,6 @@ Below are the executive presentation slides submitted for **Smart India Hackatho
 
 ---
 
-### Slide 5: Feature Comparison Matrix
-*Clear comparison showing why Manak AI outperforms the static BIS portal, generic ChatPDF tools, and expensive consultants.*
-![Feature Comparison](docs/assets/slides/05_feature_comparison.png)
-
----
-
 ## ⚖️ Feature Comparison
 
 | Capability | **MANAK AI (Our Solution)** | Official BIS Portal | Generic ChatPDF / RAG | Regulatory Consultants |
