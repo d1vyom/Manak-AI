@@ -4,6 +4,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, Square, Sparkles, Trash2, Globe } from "lucide-react";
 import { useAppStore } from "@/lib/store/app-store";
+import { CHATBOT_QUESTIONS_DATASET } from "@/lib/data/chatbot-questions";
 
 interface ChatInputProps {
   onSendMessage: (query: string) => void;
@@ -16,13 +17,11 @@ export function ChatInput({ onSendMessage, onStopStreaming, disabled }: ChatInpu
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { isStreaming, clearMessages, messages, language } = useAppStore();
 
-  const chips = [
-    { label: "Water Bottles QCO", query: "Which BIS standards apply to stainless steel water bottles?" },
-    { label: "Toy Safety QCO 2020", query: "Is BIS certification mandatory for toys under QCO?" },
-    { label: "Pressure Cooker IS 2347", query: "What are the safety requirements for pressure cookers under IS 2347?" },
-    { label: "Drinking Water Limits", query: "What are the chemical testing limits for drinking water under IS 10500:2012?" },
-    { label: "हिन्दी प्रश्न", query: "पीने के पानी के लिए BIS मानक क्या है?" },
-  ];
+  const chips = CHATBOT_QUESTIONS_DATASET.map((q) => ({
+    label: q.chipLabel[language === "hi" ? "hi" : "en"],
+    query: q.prompt[language === "hi" ? "hi" : "en"],
+  }));
+
 
   // Auto resize textarea
   useEffect(() => {

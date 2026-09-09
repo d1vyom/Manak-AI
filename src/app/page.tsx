@@ -26,19 +26,29 @@ export default function HomePage() {
       tag: language === "hi" ? "अनिवार्य QCO" : "Mandatory QCO",
     },
     {
-      title: language === "hi" ? "उपभोक्ता प्रश्न" : "Consumer Query",
-      text: "How do I verify if a pressure cooker has a valid ISI Mark?",
-      tag: language === "hi" ? "उपभोक्ता सुरक्षा" : "Consumer Safety",
+      title: language === "hi" ? "हेलमेट सुरक्षा" : "Automotive Safety",
+      text: "What are the impact absorption and helmet standards under IS 4151?",
+      tag: language === "hi" ? "IS 4151 हेलमेट" : "Helmets IS 4151",
+    },
+    {
+      title: language === "hi" ? "TMT सरिया विनिर्देश" : "Civil Infrastructure",
+      text: "What are the tensile strength and elongation requirements for Fe 500D under IS 1786?",
+      tag: language === "hi" ? "IS 1786 स्टील" : "TMT Steel IS 1786",
+    },
+    {
+      title: language === "hi" ? "उपभोक्ता सुरक्षा" : "Consumer Safety",
+      text: "How do I verify if a pressure cooker has a valid ISI Mark under IS 2347?",
+      tag: language === "hi" ? "प्रेशर कुकर" : "Cooker IS 2347",
+    },
+    {
+      title: language === "hi" ? "परीक्षण आवश्यकताएं" : "Testing Requirements",
+      text: "What are the chemical testing limits for drinking water under IS 10500:2012?",
+      tag: language === "hi" ? "खंड संदर्भ" : "Water IS 10500",
     },
     {
       title: "Hindi Query",
       text: "खिलौनों की सुरक्षा के लिए कौन से बीआईएस मानक अनिवार्य हैं?",
       tag: "हिन्दी / Multilingual",
-    },
-    {
-      title: language === "hi" ? "परीक्षण आवश्यकताएं" : "Testing Requirements",
-      text: "What are the chemical testing limits for drinking water under IS 10500:2012?",
-      tag: language === "hi" ? "खंड संदर्भ" : "Clause Citations",
     },
   ];
 
