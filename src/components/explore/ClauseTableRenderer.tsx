@@ -37,17 +37,10 @@ function parseContentBlocks(content: string): ParsedBlock[] {
     .replace(/\\n/g, "\n")
     .replace(/\r\n/g, "\n");
 
-  // If table was collapsed onto single lines with pipes (e.g. "... | |---|---|---| | Val 1 | ...")
-  if (
-    normalized.includes("|---|") ||
-    normalized.includes("| --- |") ||
-    /\|\s*---+\s*\|/.test(normalized)
-  ) {
-    // If table begins right after title text without newline
-    normalized = normalized
-      .replace(/([^\n|])\s*(\|[\s\w()/%.,+\-°:]+?\|)/g, "$1\n$2")
-      .replace(/\|\s*\|/g, "|\n|");
-  }
+  // Separate title from starting pipe table if on the same line
+  normalized = normalized
+    .replace(/((?:table|तालिका)\s+[^|\n]+?):\s*(\|)/gi, "$1:\n$2")
+    .replace(/\|\s*\|/g, "|\n|");
 
   const lines = normalized.split("\n");
   const blocks: ParsedBlock[] = [];
@@ -67,19 +60,24 @@ function parseContentBlocks(content: string): ParsedBlock[] {
 
   const isTableLine = (line: string) => {
     const trimmed = line.trim();
-    return trimmed.startsWith("|") && (trimmed.endsWith("|") || trimmed.includes("|", 1));
+    return trimmed.startsWith("|") && trimmed.endsWith("|") && trimmed.length > 2;
   };
 
   const isSeparatorLine = (line: string) => {
     const trimmed = line.trim();
-    return /^\|?[\s\-:|]+\|?$/.test(trimmed) && trimmed.includes("-");
+    if (!trimmed.includes("-") || !trimmed.startsWith("|")) return false;
+    const inner = trimmed.replace(/^\|/, "").replace(/\|$/, "");
+    const parts = inner.split("|");
+    return (
+      parts.length > 0 &&
+      parts.every((part) => /^[\s\-:]+$/.test(part.trim()) && part.includes("-"))
+    );
   };
 
   const parseRow = (rowStr: string) => {
-    const cells = rowStr.trim().split("|");
-    if (cells.length > 0 && cells[0] === "") cells.shift();
-    if (cells.length > 0 && cells[cells.length - 1] === "") cells.pop();
-    return cells.map((c) => c.trim());
+    const trimmed = rowStr.trim();
+    const inner = trimmed.replace(/^\|/, "").replace(/\|$/, "");
+    return inner.split("|").map((c) => c.trim());
   };
 
   while (i < lines.length) {
