@@ -83,18 +83,92 @@ export function cleanFormulaText(text: string): string {
   return cleaned;
 }
 
+export interface StructuredQuoteData {
+  type: "table" | "metric_row" | "text";
+  rawText: string;
+  formattedText: string;
+  parameter?: string;
+  acceptableLimit?: string;
+  permissibleLimit?: string;
+  tableMarkdown?: string;
+}
+
+/**
+ * Parses citation quote content, determining if it represents a complete table,
+ * a single structured parameter/metric row, or standard prose.
+ */
+export function parseQuoteContent(quote: string): StructuredQuoteData {
+  if (!quote) {
+    return { type: "text", rawText: "", formattedText: "" };
+  }
+
+  const cleaned = cleanFormulaText(quote).trim();
+
+  // 1. Complete or partial markdown table with table separator line
+  if (
+    cleaned.includes("|") &&
+    (cleaned.includes("|---|") || cleaned.includes("| --- |") || cleaned.includes("|:---"))
+  ) {
+    return {
+      type: "table",
+      rawText: quote,
+      formattedText: cleanQuoteText(cleaned),
+      tableMarkdown: cleaned,
+    };
+  }
+
+  // 2. Single table row with parameters and limits: "| Fluoride as F (mg/l) | 1.0 | 1.5 |"
+  if (cleaned.includes("|")) {
+    const cells = cleaned
+      .split("|")
+      .map((c) => c.trim())
+      .filter((c) => c.length > 0 && !/^[-:]+$/.test(c));
+
+    if (cells.length >= 2) {
+      const parameter = cells[0];
+      const acceptableLimit = cells[1];
+      const permissibleLimit = cells[2] || "";
+
+      let formattedText = "";
+      if (acceptableLimit && permissibleLimit && permissibleLimit.toLowerCase() !== "no relaxation") {
+        formattedText = `${parameter}: ${acceptableLimit} (Permissible: ${permissibleLimit})`;
+      } else if (acceptableLimit && permissibleLimit) {
+        formattedText = `${parameter}: ${acceptableLimit} [Permissible: ${permissibleLimit}]`;
+      } else {
+        formattedText = `${parameter}: ${acceptableLimit}`;
+      }
+
+      return {
+        type: "metric_row",
+        rawText: quote,
+        formattedText,
+        parameter,
+        acceptableLimit,
+        permissibleLimit: permissibleLimit || undefined,
+      };
+    }
+  }
+
+  // 3. Standard text / prose
+  return {
+    type: "text",
+    rawText: quote,
+    formattedText: cleanQuoteText(cleaned),
+  };
+}
+
 /**
  * Sanitizes citation quotes by stripping raw markdown table separators (e.g. |---|---|---|),
  * converting table rows into clean, readable text statements, and removing stray pipes and hyphens.
+ * Guarantees NO raw pipe '|' characters remain in plain text quotes.
  */
 export function cleanQuoteText(quote: string): string {
   if (!quote) return quote;
 
-  let text = cleanFormulaText(quote);
+  let text = cleanFormulaText(quote).trim();
 
   // Check if text has markdown table markup (pipes and dashes)
   if (text.includes("|") && (text.includes("---") || text.includes("| -"))) {
-    // Split into lines or cell blocks
     const lines = text.split(/\r?\n/);
     const parsedRows: string[][] = [];
     let titlePrefix = "";
@@ -120,13 +194,11 @@ export function cleanQuoteText(quote: string): string {
         }
       } else {
         // Line before table (e.g. Table title)
-        titlePrefix = trimmed;
+        titlePrefix = trimmed.replace(/:$/, "");
       }
     }
 
     if (parsedRows.length >= 2) {
-      // First row is header
-      const headers = parsedRows[0];
       const dataRows = parsedRows.slice(1);
 
       const formattedEntries = dataRows.map((row) => {
@@ -149,18 +221,32 @@ export function cleanQuoteText(quote: string): string {
     }
   }
 
-  // If text has inline pipes without line breaks: | Parameter | Req | ... | |---|---|---| | pH | ...
-  if (text.includes("|---|") || text.includes("|:---")) {
-    // Remove separator blocks
-    text = text.replace(/\|\s*[-:]+[-| :]+\|/g, " | ");
-    // Split cells by pipe
-    const rawParts = text
+  // Handle single table row or inline table rows without linebreaks: "| Fluoride as F (mg/l) | 1.0 | 1.5 |"
+  if (text.includes("|")) {
+    // Strip separator blocks if present
+    text = text.replace(/\|\s*[-:]+[-| :]+\|/g, " ");
+
+    const cells = text
       .split("|")
       .map((p) => p.trim())
       .filter((p) => p.length > 0 && !/^[-:]+$/.test(p));
 
-    return rawParts.join(" • ");
+    if (cells.length === 3) {
+      const [param, req, perm] = cells;
+      if (perm.toLowerCase() === "no relaxation") {
+        text = `${param}: ${req} [No relaxation]`;
+      } else {
+        text = `${param}: ${req} (Permissible: ${perm})`;
+      }
+    } else if (cells.length === 2) {
+      text = `${cells[0]}: ${cells[1]}`;
+    } else if (cells.length > 0) {
+      text = cells.join(" • ");
+    }
   }
+
+  // Replace any residual pipe characters with subtle bullet separators
+  text = text.replace(/\|/g, "•");
 
   // Remove excessive consecutive hyphens not part of em-dash or standard words
   text = text.replace(/(\s)-{3,}(\s)/g, "$1—$2");
@@ -176,3 +262,4 @@ export function formatRefNumber(refId: string): string {
   if (!refId) return "";
   return refId.toUpperCase().replace(/^REF_/, "").trim();
 }
+
