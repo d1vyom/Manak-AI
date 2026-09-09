@@ -284,5 +284,60 @@
     "groundTruthKeywords": ["IS 2347", "mandatory", "ISI", "QCO"],
     "isAbstention": false,
     "language": "en"
+  },
+  {
+    "id": "bench_27",
+    "query": "What retention system and dynamic displacement limits are mandatory for two-wheeler helmets under IS 4151?",
+    "category": "test_limits",
+    "expectedStandard": "IS 4151",
+    "expectedMandatory": "mandatory",
+    "expectedClauses": ["5.2"],
+    "groundTruthKeywords": ["IS 4151", "chin strap", "20 mm", "35 mm", "retention"],
+    "isAbstention": false,
+    "language": "en"
+  },
+  {
+    "id": "bench_28",
+    "query": "What are the ladle analysis chemical limits for Carbon and Phosphorus in Fe 500D TMT rebar under IS 1786:2008?",
+    "category": "test_limits",
+    "expectedStandard": "IS 1786",
+    "expectedMandatory": "mandatory",
+    "expectedClauses": ["4.1", "Table 1"],
+    "groundTruthKeywords": ["IS 1786", "Fe 500D", "0.25%", "0.040%", "Carbon", "Phosphorus"],
+    "isAbstention": false,
+    "language": "en"
+  },
+  {
+    "id": "bench_29",
+    "query": "Can potable water conforming to IS 10500 be used for concrete mixing and curing according to IS 456:2000?",
+    "category": "manufacturer",
+    "expectedStandard": "IS 456",
+    "expectedMandatory": "voluntary",
+    "expectedClauses": ["5.1"],
+    "groundTruthKeywords": ["IS 456", "IS 10500", "potable water", "mixing", "curing"],
+    "isAbstention": false,
+    "language": "en"
+  },
+  {
+    "id": "bench_30",
+    "query": "दोपहिया वाहन चालकों के लिए सुरक्षात्मक हेलमेट के लिए कौन सा BIS मानक लागू होता है?",
+    "category": "multilingual",
+    "expectedStandard": "IS 4151",
+    "expectedMandatory": "mandatory",
+    "expectedClauses": ["4.1"],
+    "groundTruthKeywords": ["IS 4151", "हेलमेट", "सुरक्षा", "अनिवार्य"],
+    "isAbstention": false,
+    "language": "hi"
+  },
+  {
+    "id": "bench_31",
+    "query": "IS 1786 के तहत Fe 500D TMT स्टील बार की न्यूनतम तन्यता शक्ति (Tensile Strength) कितनी होनी चाहिए?",
+    "category": "multilingual",
+    "expectedStandard": "IS 1786",
+    "expectedMandatory": "mandatory",
+    "expectedClauses": ["8.1", "Table 2"],
+    "groundTruthKeywords": ["IS 1786", "565", "Fe 500D", "तन्यता"],
+    "isAbstention": false,
+    "language": "hi"
   }
 ]
