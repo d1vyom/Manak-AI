@@ -14,47 +14,129 @@ export interface VerificationDetails {
   relatedStandards: RelatedStandard[];
 }
 
+const TABLE_STOP_WORDS = new Set([
+  "limit",
+  "limits",
+  "requirement",
+  "requirements",
+  "acceptable",
+  "permissible",
+  "absence",
+  "alternate",
+  "source",
+  "table",
+  "clause",
+  "specification",
+  "specifications",
+  "shall",
+  "value",
+  "values",
+  "under",
+  "standard",
+  "parameters",
+]);
+
+function tokenizeForMatching(str: string): string[] {
+  return str
+    .toLowerCase()
+    .replace(/[^a-z0-9.\s]/g, " ")
+    .split(/\s+/)
+    .map((t) => t.replace(/^\.+|\.+$/g, ""))
+    .filter(
+      (t) =>
+        t.length >= 2 &&
+        !/^[0-9]$/.test(t) &&
+        !["ref", "clause", "table", "doc"].includes(t)
+    );
+}
+
 /**
  * Extracts a verbatim or high-relevance quote from the evidence block that aligns
- * with the sentence citing that reference, automatically sanitizing markdown tables and hyphens.
+ * with the sentence citing that reference, prioritizing substantive parameter rows,
+ * rendering full tables for general citations, and preventing empty table title headers.
  */
 function extractMatchingQuote(
   evidenceContent: string,
   citingSentence: string
 ): string {
   // First, clean formulas and LaTeX symbols
-  const sanitizedContent = cleanFormulaText(evidenceContent);
+  const sanitizedContent = cleanFormulaText(evidenceContent).trim();
 
-  // Split evidence into candidate segments (sentences or clean table rows)
-  const segments = sanitizedContent
+  // Strip leading metadata header e.g. [IS 10500:2012 | Clause 4.3 | ...]
+  const strippedContent = sanitizedContent.replace(/^\[[^\]]+\]\s*/, "").trim();
+
+  // Check if content contains a markdown table
+  const hasMarkdownTable =
+    strippedContent.includes("|") &&
+    (strippedContent.includes("|---|") ||
+      strippedContent.includes("| --- |") ||
+      strippedContent.includes("|:---"));
+
+  const citingTokens = new Set(
+    tokenizeForMatching(citingSentence).filter((w) => !TABLE_STOP_WORDS.has(w))
+  );
+
+  if (hasMarkdownTable) {
+    const lines = strippedContent
+      .split(/\r?\n/)
+      .map((l) => l.trim())
+      .filter(Boolean);
+
+    let bestRow = "";
+    let maxRowScore = 0;
+
+    for (const line of lines) {
+      // Exclude divider lines, table titles ending with colon, and table header rows
+      if (/^\|?\s*[-:]+[-| :]+\|?$/.test(line)) continue;
+      if (/^table\s+\d+.*:?$/i.test(line)) continue;
+      if (/^\|\s*(parameter|substance|s\.?\s*no\.?)\s*\|/i.test(line)) continue;
+
+      if (line.includes("|")) {
+        const lineTokens = tokenizeForMatching(line).filter(
+          (w) => !TABLE_STOP_WORDS.has(w)
+        );
+        let score = 0;
+        for (const t of lineTokens) {
+          if (citingTokens.has(t)) {
+            score += /\d/.test(t) ? 3 : 2;
+          }
+        }
+
+        if (score > maxRowScore) {
+          maxRowScore = score;
+          bestRow = line;
+        }
+      }
+    }
+
+    // If a specific table row matches unique parameter tokens (score >= 2), return that row
+    if (bestRow && maxRowScore >= 2) {
+      return bestRow;
+    }
+
+    // Otherwise, citation refers to the overall table requirement: return clean table without metadata
+    return strippedContent;
+  }
+
+  // Standard prose: Split evidence into candidate segments (sentences)
+  const segments = strippedContent
     .split(/(?:(?<=[.?!])\s+|\r?\n)/)
     .map((s) => s.trim())
     // Exclude empty lines and table divider lines like |---|---|---|
     .filter((s) => s.length > 10 && !/^\|?\s*[-:]+[-| :]+\|?$/.test(s));
 
   if (segments.length === 0) {
-    return cleanQuoteText(sanitizedContent.slice(0, 250).trim() + "...");
+    return cleanQuoteText(strippedContent.slice(0, 250).trim() + "...");
   }
-
-  // Tokenize citing sentence to find the segment with highest token overlap
-  const citingTokens = new Set(
-    citingSentence
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, " ")
-      .split(/\s+/)
-      .filter((w) => w.length >= 3 || /\d/.test(w))
-  );
 
   let bestSegment = segments[0];
   let maxScore = -1;
 
   if (citingTokens.size > 0) {
     for (const seg of segments) {
-      const sTokens = seg
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, " ")
-        .split(/\s+/)
-        .filter((w) => w.length >= 3 || /\d/.test(w));
+      const sTokens = tokenizeForMatching(seg).filter(
+        (w) => !TABLE_STOP_WORDS.has(w)
+      );
 
       let matchScore = 0;
       for (const t of sTokens) {
@@ -71,7 +153,6 @@ function extractMatchingQuote(
     }
   }
 
-  // Format table rows or strip lingering markdown pipes
   return cleanQuoteText(bestSegment);
 }
 
