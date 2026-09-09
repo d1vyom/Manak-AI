@@ -7,6 +7,7 @@ import { Citation } from "@/types/citations";
 import { useAppStore } from "@/lib/store/app-store";
 import { t } from "@/lib/utils/i18n";
 import { cleanQuoteText, formatRefNumber } from "@/lib/utils/format";
+import { ClauseTableRenderer } from "../explore/ClauseTableRenderer";
 
 interface CitationCardProps {
   citation: Citation;
@@ -86,9 +87,15 @@ export function CitationCard({ citation }: CitationCardProps) {
 
       {/* Verbatim Quote Excerpt */}
       {formattedQuote && (
-        <div className="relative mt-3 rounded-lg border-l-2 border-saffron-500 bg-slate-50/90 p-3 text-xs italic leading-relaxed text-navy-900 dark:bg-navy-950/50 dark:text-navy-100">
+        <div className="relative mt-3 rounded-lg border-l-2 border-saffron-500 bg-slate-50/90 p-3 text-xs leading-relaxed text-navy-900 dark:bg-navy-950/50 dark:text-navy-100">
           <Quote className="absolute -top-1 -left-1 h-3.5 w-3.5 text-saffron-500/40" />
-          <p className="line-clamp-4 pl-2">&ldquo;{formattedQuote}&rdquo;</p>
+          {formattedQuote.includes("|---|") || formattedQuote.includes("| --- |") ? (
+            <div className="pl-1.5 pt-0.5">
+              <ClauseTableRenderer content={formattedQuote} language={language} />
+            </div>
+          ) : (
+            <p className="line-clamp-4 pl-2 italic">&ldquo;{formattedQuote}&rdquo;</p>
+          )}
         </div>
       )}
 
